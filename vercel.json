@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "name": "frontend",
+      "rootDirectory": "frontend",
+      "framework": "create-react-app"
+    },
+    {
+      "name": "backend",
+      "rootDirectory": "backend",
+      "framework": null
+    },
+    {
+      "name": "admin",
+      "rootDirectory": "admin",
+      "framework": "create-react-app"
+    }
+  ]
+}
