@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const functions = require('firebase-functions');
 require('dotenv').config({ path: __dirname + '/.env' });
 
 process.env.MONGOMS_DOWNLOAD_DIR = 'D:\\mongodb-binaries';
@@ -19,37 +18,41 @@ let isConnected = false;
 async function connectDB() {
   if (isConnected) return;
   
-  const uri = process.env.MONGODB_URI;
-  
-  // Try Atlas first
-  if (uri) {
-    try {
-      console.log('Connecting to MongoDB Atlas...');
-      await mongoose.connect(uri);
-      console.log('MongoDB Connected (Atlas)');
-      isConnected = true;
-      return;
-    } catch (err) {
-      console.log('Atlas connection failed:', err.message);
-    }
-  }
-
-  // Fallback to local MongoDB
+  // Try local MongoDB first (persistent data!)
   try {
     console.log('Trying local MongoDB...');
-    await mongoose.connect('mongodb://localhost:27017/sweetcrumb');
-    console.log('MongoDB Connected (Local)');
+    await mongoose.connect('mongodb://localhost:27017/sweetcrumb', { serverSelectionTimeoutMS: 3000 });
+    console.log('MongoDB Connected (Local) - Data will persist!');
     isConnected = true;
     return;
   } catch (err) {
     console.log('Local MongoDB not available');
   }
 
-  // Fallback to Memory Server (only for local dev)
+  // Try Atlas
+  const uri = process.env.MONGODB_URI;
+  if (uri) {
+    const directUri = uri.replace('mongodb+srv://', 'mongodb://');
+    const uris = [uri, directUri];
+    
+    for (const tryUri of uris) {
+      try {
+        console.log('Connecting to MongoDB Atlas...');
+        await mongoose.connect(tryUri, { serverSelectionTimeoutMS: 5000 });
+        console.log('MongoDB Connected (Atlas)');
+        isConnected = true;
+        return;
+      } catch (err) {
+        console.log('Atlas attempt failed:', err.message);
+      }
+    }
+  }
+
+  // Fallback to Memory Server (NOT persistent)
   if (!process.env.FIREBASE_FUNCTION) {
     try {
       const { MongoMemoryServer } = require('mongodb-memory-server');
-      console.log('Starting in-memory MongoDB...');
+      console.log('Starting in-memory MongoDB... (Data will NOT persist!)');
       const mongod = await MongoMemoryServer.create({
         binary: { version: '6.0.4' }
       });
@@ -82,9 +85,6 @@ app.get('/', (req, res) => {
   res.json({ message: 'Sweet Crumb Bakery API Running' });
 });
 
-// Export for Firebase Cloud Functions
-exports.api = functions.https.onRequest(app);
-
 // For local development
 const PORT = process.env.PORT || 5000;
 if (!process.env.FIREBASE_FUNCTION) {
@@ -94,3 +94,7 @@ if (!process.env.FIREBASE_FUNCTION) {
     });
   });
 }
+
+// Export for Firebase Cloud Functions
+const functions = require('firebase-functions');
+exports.api = functions.https.onRequest(app);
