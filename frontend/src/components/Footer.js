@@ -111,7 +111,7 @@ const Footer = () => {
         textAlign: 'center',
         color: '#f8bbd0'
       }}>
-        <p>© 2026 Sweet Crumb Bakery. All rights reserved.</p>
+        <p>© 2026 Sweet Crumb. All rights reserved.</p>
       </div>
     </footer>
   );

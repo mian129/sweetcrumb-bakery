@@ -209,7 +209,7 @@ const Home = () => {
         <motion.div initial={{ opacity: 0, x: -60 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '320px', maxWidth: '500px' }}>
           <span style={{ display: 'inline-block', padding: '0.5rem 1.5rem', background: '#fff5f7', color: '#e91e8c', borderRadius: '25px', fontSize: '0.9rem', fontWeight: '600', marginBottom: '1.5rem' }}>Our Story</span>
           <h2 style={{ fontSize: '2.8rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '1.5rem', lineHeight: 1.2 }}>Baking Happiness Since 2020</h2>
-          <p style={{ color: '#6d3a5a', lineHeight: 1.9, marginBottom: '1.5rem', fontSize: '1.1rem' }}>Welcome to Sweet Crumb Bakery, where every treat is baked with love and passion. What started as a small home kitchen adventure has grown into a beloved bakery serving the South Denver community.</p>
+          <p style={{ color: '#6d3a5a', lineHeight: 1.9, marginBottom: '1.5rem', fontSize: '1.1rem' }}>Welcome to Sweet Crumb, where every treat is baked with love and passion. What started as a small home kitchen adventure has grown into a beloved bakery serving the community.</p>
           <Link to="/about" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', background: '#e91e8c', color: 'white', textDecoration: 'none', borderRadius: '50px', fontWeight: '600' }}>Learn More →</Link>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 60 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '320px', maxWidth: '500px' }}>

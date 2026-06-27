@@ -30,9 +30,6 @@ const sendOrderConfirmation = async (order) => {
     ).join('');
 
     const paymentLabels = {
-      cod: 'Cash on Delivery',
-      jazzcash: 'JazzCash',
-      'easy paisa': 'EasyPaisa',
       bank: 'Bank Transfer'
     };
 
@@ -45,26 +42,26 @@ const sendOrderConfirmation = async (order) => {
       <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #d4a574 0%, #c49564 100%); padding: 30px; text-align: center; }
+        .header { background: linear-gradient(135deg, #e91e8c 0%, #c2185b 100%); padding: 30px; text-align: center; }
         .header h1 { color: white; margin: 0; font-size: 28px; }
         .header p { color: rgba(255,255,255,0.9); margin: 5px 0 0; }
         .content { padding: 30px; }
         .order-badge { background: #d4edda; color: #155724; padding: 8px 20px; border-radius: 20px; display: inline-block; font-weight: 600; margin-bottom: 20px; }
         .section { margin-bottom: 25px; }
-        .section h3 { color: #2c1810; font-size: 14px; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
-        .info-box { background: #fdf8f3; padding: 15px; border-radius: 10px; }
+        .section h3 { color: #880e4f; font-size: 14px; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+        .info-box { background: #fff5f7; padding: 15px; border-radius: 10px; }
         .info-box p { margin: 5px 0; color: #555; }
         table { width: 100%; border-collapse: collapse; }
         .total-row { border-top: 2px solid #eee; font-weight: 700; font-size: 18px; }
-        .total-row td { padding-top: 15px; color: #2c1810; }
-        .footer { background: #2c1810; padding: 20px; text-align: center; color: #d4a574; }
+        .total-row td { padding-top: 15px; color: #880e4f; }
+        .footer { background: #880e4f; padding: 20px; text-align: center; color: #fce4ec; }
         .footer p { margin: 5px 0; font-size: 13px; }
       </style>
     </head>
     <body>
       <div class="container">
         <div class="header">
-          <h1>🧁 Sweet Crumb Bakery</h1>
+          <h1>🧁 Sweet Crumb</h1>
           <p>Order Confirmation</p>
         </div>
         
@@ -136,7 +133,7 @@ const sendOrderConfirmation = async (order) => {
         </div>
 
         <div class="footer">
-          <p><strong>Sweet Crumb Bakery</strong></p>
+          <p><strong>Sweet Crumb</strong></p>
           <p>Baked with Love ❤️</p>
         </div>
       </div>
@@ -145,9 +142,9 @@ const sendOrderConfirmation = async (order) => {
     `;
 
     const mailOptions = {
-      from: `"🧁 Sweet Crumb Bakery" <${process.env.EMAIL_USER}>`,
+      from: `"🧁 Sweet Crumb" <${process.env.EMAIL_USER}>`,
       to: order.email,
-      subject: `Order Confirmed #${orderId.slice(-6).toUpperCase()} - Sweet Crumb Bakery`,
+      subject: `Order Confirmed #${orderId.slice(-6).toUpperCase()} - Sweet Crumb`,
       html: html,
       headers: {
         'X-Mailer': 'SweetCrumbBakery',

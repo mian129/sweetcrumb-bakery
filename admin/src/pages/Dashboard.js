@@ -113,7 +113,7 @@ const Dashboard = () => {
                 <td>{order.phone}</td>
                 <td><strong>Rs. {order.totalAmount}</strong></td>
                 <td style={{ fontSize: '0.85rem' }}>
-                  {order.paymentMethod === 'cod' ? 'COD' : order.paymentMethod === 'jazzcash' ? 'JazzCash' : order.paymentMethod === 'easy paisa' ? 'EasyPaisa' : 'Bank'}
+                  {order.paymentMethod === 'bank' ? 'Bank Transfer' : order.paymentMethod}
                 </td>
                 <td>
                   <span style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '500', background: getStatusColor(order.status), textTransform: 'capitalize' }}>

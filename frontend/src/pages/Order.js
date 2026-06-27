@@ -10,9 +10,10 @@ const Order = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imgErrors, setImgErrors] = useState({});
+  const [settings, setSettings] = useState({ deliveryCharges: 50, bankName: '', accountTitle: '', accountNumber: '', iban: '', branchCode: '', bankInstructions: '' });
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', address: '', city: '', postalCode: '',
-    paymentMethod: 'cod', specialInstructions: ''
+    paymentMethod: 'bank', specialInstructions: ''
   });
   const placeholderImg = 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg?auto=compress&cs=tinysrgb&w=400';
 
@@ -25,7 +26,16 @@ const Order = () => {
         console.log('Could not fetch products');
       }
     };
+    const fetchSettings = async () => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/settings');
+        setSettings(res.data);
+      } catch (err) {
+        console.log('Could not fetch settings');
+      }
+    };
     fetchProducts();
+    fetchSettings();
   }, []);
 
   const addToCart = (item) => {
@@ -44,7 +54,7 @@ const Order = () => {
   };
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-  const deliveryFee = 50;
+  const deliveryFee = settings.deliveryCharges || 50;
   const total = subtotal + deliveryFee;
 
   const handleChange = (e) => {
@@ -234,9 +244,6 @@ const Order = () => {
                   <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: '500', color: '#555', fontSize: '0.9rem' }}>Payment Method *</label>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
                     {[
-                      { value: 'cod', label: 'Cash on Delivery', desc: 'Paisa deliver pe den' },
-                      { value: 'jazzcash', label: 'JazzCash', desc: 'Mobile wallet se pay karein' },
-                      { value: 'easy paisa', label: 'EasyPaisa', desc: 'Mobile wallet se pay karein' },
                       { value: 'bank', label: 'Bank Transfer', desc: 'Bank se transfer karein' }
                     ].map((method) => (
                       <label key={method.value} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '1rem', border: `2px solid ${formData.paymentMethod === method.value ? '#e91e8c' : '#eee'}`, borderRadius: '12px', cursor: 'pointer', background: formData.paymentMethod === method.value ? '#fff5f7' : 'white', transition: 'all 0.3s' }}>
@@ -280,9 +287,21 @@ const Order = () => {
 
               <div style={{ padding: '0.8rem', background: '#fff5f7', borderRadius: '10px', marginTop: '1rem' }}>
                 <p style={{ fontSize: '0.85rem', color: '#666', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  💳 Payment: <strong style={{ color: '#880e4f' }}>{formData.paymentMethod === 'cod' ? 'Cash on Delivery' : formData.paymentMethod === 'jazzcash' ? 'JazzCash' : formData.paymentMethod === 'easy paisa' ? 'EasyPaisa' : 'Bank Transfer'}</strong>
+                  💳 Payment: <strong style={{ color: '#880e4f' }}>Bank Transfer</strong>
                 </p>
               </div>
+
+              {settings.bankName && (
+                <div style={{ padding: '1rem', background: '#f8f9fa', borderRadius: '10px', marginTop: '0.8rem', border: '1px solid #e9ecef' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: '600', color: '#880e4f', marginBottom: '0.5rem' }}>🏦 Bank Details:</p>
+                  <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.2rem 0' }}>Bank: <strong>{settings.bankName}</strong></p>
+                  {settings.accountTitle && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.2rem 0' }}>Title: <strong>{settings.accountTitle}</strong></p>}
+                  {settings.accountNumber && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.2rem 0' }}>A/C: <strong>{settings.accountNumber}</strong></p>}
+                  {settings.iban && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.2rem 0' }}>IBAN: <strong>{settings.iban}</strong></p>}
+                  {settings.branchCode && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.2rem 0' }}>Branch: <strong>{settings.branchCode}</strong></p>}
+                  {settings.bankInstructions && <p style={{ fontSize: '0.75rem', color: '#e91e8c', marginTop: '0.5rem', fontStyle: 'italic' }}>{settings.bankInstructions}</p>}
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '0.8rem', marginTop: '1.5rem' }}>
                 <button onClick={() => setStep(1)} style={{ flex: '1', padding: '0.9rem', background: 'white', color: '#e91e8c', border: '2px solid #e91e8c', borderRadius: '12px', fontSize: '1rem', fontWeight: '600', cursor: 'pointer' }}>← Back</button>

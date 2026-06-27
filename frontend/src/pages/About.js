@@ -20,7 +20,7 @@ const About = () => {
         <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '320px' }}>
           <span style={{ display: 'inline-block', padding: '0.5rem 1.5rem', background: '#fff5f7', color: '#e91e8c', borderRadius: '25px', fontSize: '0.9rem', fontWeight: '600', marginBottom: '1.5rem' }}>About Us</span>
           <h2 style={{ fontSize: '2.5rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '1.5rem', lineHeight: 1.2 }}>Baking Dreams Into Reality</h2>
-          <p style={{ color: '#6d3a5a', lineHeight: 1.9, marginBottom: '1.5rem', fontSize: '1.1rem' }}>Sweet Crumb Bakery began in 2020 as a passion project in a tiny home kitchen. What started as baking for friends and family quickly blossomed into something much more beautiful.</p>
+          <p style={{ color: '#6d3a5a', lineHeight: 1.9, marginBottom: '1.5rem', fontSize: '1.1rem' }}>Sweet Crumb began in 2020 as a passion project in a tiny home kitchen. What started as baking for friends and family quickly blossomed into something much more beautiful.</p>
           <p style={{ color: '#6d3a5a', lineHeight: 1.9, marginBottom: '1.5rem', fontSize: '1.1rem' }}>Every cookie, cupcake, and cake is made from scratch using only the finest ingredients. We believe that baking is not just about following recipes—it's about creating moments of joy and sweetness in people's lives.</p>
           <p style={{ color: '#6d3a5a', lineHeight: 1.9, fontSize: '1.1rem' }}>Today, we're proud to serve the South Denver community with handcrafted treats that bring smiles to faces and warmth to hearts.</p>
         </motion.div>
