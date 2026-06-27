@@ -20,7 +20,7 @@ router.get('/', auth, async (req, res) => {
 // Create order (anyone can place)
 router.post('/', async (req, res) => {
   try {
-    const { customerName, email, phone, address, city, postalCode, paymentMethod, items, totalAmount, specialInstructions } = req.body;
+    const { customerName, email, phone, address, city, postalCode, paymentMethod, transactionId, items, totalAmount, specialInstructions } = req.body;
 
     const order = new Order({
       customerName,
@@ -30,6 +30,7 @@ router.post('/', async (req, res) => {
       city,
       postalCode,
       paymentMethod,
+      transactionId,
       items,
       totalAmount,
       specialInstructions
