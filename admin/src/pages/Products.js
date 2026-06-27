@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
 
 const Products = () => {
@@ -26,7 +26,7 @@ const Products = () => {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/products', {
+      const res = await api.get('/api/products', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(res.data);
@@ -47,9 +47,9 @@ const Products = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
       if (editingProduct) {
-        await axios.put(`http://localhost:5000/api/products/${editingProduct._id}`, formData, config);
+        await api.put(`/api/products/${editingProduct._id}`, formData, config);
       } else {
-        await axios.post('http://localhost:5000/api/products', formData, config);
+        await api.post('/api/products', formData, config);
       }
       
       setShowModal(false);
@@ -79,7 +79,7 @@ const Products = () => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:5000/api/products/${id}`, {
+        await api.delete(`/api/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchProducts();

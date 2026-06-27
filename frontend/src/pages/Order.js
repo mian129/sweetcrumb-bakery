@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const Order = () => {
   const [menuItems, setMenuItems] = useState([]);
@@ -20,7 +20,7 @@ const Order = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/products');
+        const res = await api.get('/api/products');
         setMenuItems(res.data.map(p => ({ _id: p._id, name: p.name, price: p.price, image: p.image })));
       } catch (err) {
         console.log('Could not fetch products');
@@ -28,7 +28,7 @@ const Order = () => {
     };
     const fetchSettings = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/settings');
+        const res = await api.get('/api/settings');
         setSettings(res.data);
       } catch (err) {
         console.log('Could not fetch settings');
@@ -81,7 +81,7 @@ const Order = () => {
         totalAmount: total,
         specialInstructions: formData.specialInstructions
       };
-      await axios.post('http://localhost:5000/api/orders', orderData);
+      await api.post('/api/orders', orderData);
       setOrderPlaced(true);
       setCart([]);
       setStep(1);

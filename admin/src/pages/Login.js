@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 const Login = ({ onLogin }) => {
   const [isRegister, setIsRegister] = useState(false);
@@ -22,12 +22,12 @@ const Login = ({ onLogin }) => {
 
     try {
       const url = isRegister
-        ? 'http://localhost:5000/api/auth/register'
-        : 'http://localhost:5000/api/auth/login';
+        ? '/api/auth/register'
+        : '/api/auth/login';
       const payload = isRegister
         ? { username: formData.username, email: formData.email, password: formData.password }
         : { email: formData.email, password: formData.password };
-      const res = await axios.post(url, payload);
+      const res = await api.post(url, payload);
       onLogin(res.data.token, res.data.user);
     } catch (err) {
       setError(err.response?.data?.message || (isRegister ? 'Registration failed' : 'Login failed'));

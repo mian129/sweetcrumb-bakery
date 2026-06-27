@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { FaBox, FaShoppingCart, FaDollarSign, FaClock } from 'react-icons/fa';
 
 const Dashboard = () => {
@@ -21,8 +21,8 @@ const Dashboard = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       const [productsRes, ordersRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/products', config),
-        axios.get('http://localhost:5000/api/orders', config)
+        api.get('/api/products', config),
+        api.get('/api/orders', config)
       ]);
 
       const orders = ordersRes.data;

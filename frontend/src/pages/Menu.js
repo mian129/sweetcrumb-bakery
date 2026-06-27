@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const categories = ['all', 'cookies', 'cupcakes', 'cakes', 'pastries'];
 
@@ -13,7 +13,7 @@ const Menu = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/products');
+        const res = await api.get('/api/products');
         setProducts(res.data);
       } catch (err) {
         console.log('Could not fetch products');

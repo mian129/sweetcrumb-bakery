@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { FaSave, FaTruck, FaUniversity } from 'react-icons/fa';
 
 const Settings = () => {
@@ -21,7 +21,7 @@ const Settings = () => {
 
   const fetchSettings = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/settings');
+      const res = await api.get('/api/settings');
       setSettings(res.data);
     } catch (err) {
       console.error(err);
@@ -37,7 +37,7 @@ const Settings = () => {
     try {
       const token = localStorage.getItem('token');
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.put('http://localhost:5000/api/settings', settings, config);
+      await api.put('/api/settings', settings, config);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
