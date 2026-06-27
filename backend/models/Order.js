@@ -27,8 +27,12 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    default: 'cod',
-    enum: ['cod', 'bank', 'jazzcash', 'easy paisa']
+    default: 'bank',
+    enum: ['bank']
+  },
+  transactionId: {
+    type: String,
+    default: ''
   },
   items: [{
     product: {

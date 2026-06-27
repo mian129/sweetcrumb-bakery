@@ -13,7 +13,7 @@ const Order = () => {
   const [settings, setSettings] = useState({ deliveryCharges: 50, bankName: '', accountTitle: '', accountNumber: '', iban: '', branchCode: '', bankInstructions: '' });
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', address: '', city: '', postalCode: '',
-    paymentMethod: 'bank', specialInstructions: ''
+    paymentMethod: 'bank', specialInstructions: '', transactionId: ''
   });
   const placeholderImg = 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg?auto=compress&cs=tinysrgb&w=400';
 
@@ -76,6 +76,7 @@ const Order = () => {
         city: formData.city,
         postalCode: formData.postalCode,
         paymentMethod: formData.paymentMethod,
+        transactionId: formData.transactionId,
         items: cart.map(item => ({ product: item._id, name: item.name, price: item.price, quantity: item.qty })),
         totalAmount: total,
         specialInstructions: formData.specialInstructions
@@ -255,6 +256,13 @@ const Order = () => {
                       </label>
                     ))}
                   </div>
+                </div>
+
+                <div style={{ marginTop: '1.5rem' }}>
+                  <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: '500', color: '#555', fontSize: '0.9rem' }}>Transaction ID *</label>
+                  <input type="text" name="transactionId" value={formData.transactionId} onChange={handleChange} placeholder="Bank transfer ki transaction ID daalein"
+                    style={{ width: '100%', padding: '0.8rem', border: '2px solid #e9ecef', borderRadius: '8px', fontSize: '1rem', boxSizing: 'border-box' }} required />
+                  <p style={{ fontSize: '0.75rem', color: '#999', marginTop: '0.3rem' }}>Bank transfer karne ke baad jo transaction ID milti hai woh daalein</p>
                 </div>
 
                 <div style={{ marginTop: '1.5rem' }}>

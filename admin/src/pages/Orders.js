@@ -52,7 +52,7 @@ const Orders = () => {
   };
 
   const getPaymentLabel = (method) => {
-    const labels = { cod: 'Cash on Delivery', jazzcash: 'JazzCash', 'easy paisa': 'EasyPaisa', bank: 'Bank Transfer' };
+    const labels = { bank: 'Bank Transfer' };
     return labels[method] || method;
   };
 
@@ -100,6 +100,11 @@ const Orders = () => {
                   <span style={{ fontSize: '0.8rem', padding: '0.2rem 0.5rem', background: '#f5f5f5', borderRadius: '4px' }}>
                     {getPaymentLabel(order.paymentMethod)}
                   </span>
+                  {order.transactionId && (
+                    <div style={{ fontSize: '0.7rem', color: '#999', fontFamily: 'monospace', marginTop: '2px' }}>
+                      TX: {order.transactionId}
+                    </div>
+                  )}
                 </td>
                 <td>
                   <span style={{ padding: '0.3rem 0.8rem', borderRadius: '20px', fontSize: '0.8rem', fontWeight: '500', background: getStatusColor(order.status), textTransform: 'capitalize' }}>
@@ -156,9 +161,15 @@ const Orders = () => {
 
             <div style={{ marginBottom: '1.5rem' }}>
               <h4 style={{ color: '#999', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Payment</h4>
-              <p style={{ padding: '0.5rem 1rem', background: '#fdf8f3', borderRadius: '8px', display: 'inline-block', fontWeight: '600', color: '#2c1810' }}>
+              <p style={{ padding: '0.5rem 1rem', background: '#fff5f7', borderRadius: '8px', display: 'inline-block', fontWeight: '600', color: '#880e4f' }}>
                 {getPaymentLabel(selectedOrder.paymentMethod)}
               </p>
+              {selectedOrder.transactionId && (
+                <div style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' }}>
+                  <span style={{ fontSize: '0.8rem', color: '#666' }}>Transaction ID: </span>
+                  <strong style={{ color: '#880e4f', fontFamily: 'monospace' }}>{selectedOrder.transactionId}</strong>
+                </div>
+              )}
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
