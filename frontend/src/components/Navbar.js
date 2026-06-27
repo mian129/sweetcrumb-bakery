@@ -27,7 +27,7 @@ const Navbar = () => {
         <li>
           <Link to="/order" style={{
             padding: '0.75rem 1.5rem',
-            background: '#d4a574',
+            background: '#e91e8c',
             color: 'white',
             borderRadius: '25px',
             textDecoration: 'none',

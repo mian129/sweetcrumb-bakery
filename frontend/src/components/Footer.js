@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 const Footer = () => {
   return (
     <footer style={{
-      background: '#2c1810',
+      background: '#880e4f',
       color: 'white',
       padding: '4rem 5% 2rem'
     }}>
@@ -23,13 +23,13 @@ const Footer = () => {
             style={{
               fontSize: '1.8rem',
               fontFamily: "'Playfair Display', serif",
-              color: '#d4a574',
+              color: '#fce4ec',
               marginBottom: '1rem'
             }}
           >
             Sweet Crumb
           </motion.h3>
-          <p style={{ color: '#aaa', lineHeight: 1.8 }}>
+          <p style={{ color: '#f8bbd0', lineHeight: 1.8 }}>
             Thoughtfully crafted and beautifully delicious one-of-a-kind treats for every occasion.
           </p>
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem' }}>
@@ -41,7 +41,7 @@ const Footer = () => {
                 style={{
                   width: '40px',
                   height: '40px',
-                  background: 'rgba(212, 165, 116, 0.1)',
+                  background: 'rgba(252, 228, 236, 0.1)',
                   borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
@@ -58,7 +58,7 @@ const Footer = () => {
 
         {/* Quick Links */}
         <div>
-          <h4 style={{ color: '#d4a574', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Quick Links</h4>
+          <h4 style={{ color: '#fce4ec', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Quick Links</h4>
           {[
             { to: '/', label: 'Home' },
             { to: '/menu', label: 'Menu' },
@@ -71,7 +71,7 @@ const Footer = () => {
                 to={link.to}
                 style={{
                   display: 'block',
-                  color: '#aaa',
+                  color: '#f8bbd0',
                   textDecoration: 'none',
                   padding: '0.4rem 0',
                   transition: 'color 0.3s'
@@ -85,8 +85,8 @@ const Footer = () => {
 
         {/* Hours */}
         <div>
-          <h4 style={{ color: '#d4a574', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Hours</h4>
-          <div style={{ color: '#aaa', lineHeight: 2 }}>
+          <h4 style={{ color: '#fce4ec', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Hours</h4>
+          <div style={{ color: '#f8bbd0', lineHeight: 2 }}>
             <p>Tuesday - Friday: 7am - 6pm</p>
             <p>Saturday: 8am - 5pm</p>
             <p>Sunday: 8am - 3pm</p>
@@ -96,11 +96,10 @@ const Footer = () => {
 
         {/* Contact */}
         <div>
-          <h4 style={{ color: '#d4a574', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Contact</h4>
-          <div style={{ color: '#aaa', lineHeight: 2 }}>
-            <p>📍 South Denver, Colorado</p>
-            <p>📞 (555) 123-4567</p>
-            <p>✉️ hello@sweetcrumb.com</p>
+          <h4 style={{ color: '#fce4ec', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Contact</h4>
+          <div style={{ color: '#f8bbd0', lineHeight: 2 }}>
+            <p>📍 Faisalabad, Pakistan</p>
+            <p>✉️ Sweetcrumb099@gmail.com</p>
           </div>
         </div>
       </div>
@@ -110,7 +109,7 @@ const Footer = () => {
         marginTop: '3rem',
         paddingTop: '2rem',
         textAlign: 'center',
-        color: '#666'
+        color: '#f8bbd0'
       }}>
         <p>© 2026 Sweet Crumb Bakery. All rights reserved.</p>
       </div>

@@ -22,19 +22,19 @@ const Gallery = () => {
   const filtered = filter === 'all' ? galleryImages : galleryImages.filter(img => img.category === filter);
 
   return (
-    <div style={{ paddingTop: '100px', minHeight: '100vh', background: '#fdf8f3' }}>
-      <section style={{ padding: '5rem 5%', textAlign: 'center', background: 'linear-gradient(135deg, #fdf8f3 0%, #f5deb3 100%)' }}>
+    <div style={{ paddingTop: '100px', minHeight: '100vh', background: '#fff5f7' }}>
+      <section style={{ padding: '5rem 5%', textAlign: 'center', background: 'linear-gradient(135deg, #fff5f7 0%, #fce4ec 100%)' }}>
         <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
-          style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontFamily: "'Playfair Display', serif", color: '#2c1810', marginBottom: '1rem' }}>Our Gallery</motion.h1>
+          style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '1rem' }}>Our Gallery</motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-          style={{ color: '#5a3d2b', fontSize: '1.2rem' }}>A visual feast of our baked creations</motion.p>
+          style={{ color: '#6d3a5a', fontSize: '1.2rem' }}>A visual feast of our baked creations</motion.p>
       </section>
 
       <section style={{ padding: '2rem 5%', textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           {['all', 'cookies', 'cupcakes', 'cakes', 'pastries'].map((cat) => (
             <motion.button key={cat} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setFilter(cat)}
-              style={{ padding: '0.8rem 2rem', border: 'none', borderRadius: '25px', background: filter === cat ? '#d4a574' : 'white', color: filter === cat ? 'white' : '#2c1810', cursor: 'pointer', fontSize: '1rem', fontWeight: '600', textTransform: 'capitalize' }}>{cat}</motion.button>
+              style={{ padding: '0.8rem 2rem', border: 'none', borderRadius: '25px', background: filter === cat ? '#e91e8c' : 'white', color: filter === cat ? 'white' : '#880e4f', cursor: 'pointer', fontSize: '1rem', fontWeight: '600', textTransform: 'capitalize' }}>{cat}</motion.button>
           ))}
         </div>
       </section>
@@ -69,7 +69,7 @@ const Gallery = () => {
               <div style={{ position: 'absolute', bottom: '-50px', left: 0, right: 0, textAlign: 'center' }}>
                 <h3 style={{ color: 'white', fontSize: '1.5rem' }}>{selectedImage.title}</h3>
                 <button onClick={() => setSelectedImage(null)}
-                  style={{ marginTop: '1rem', padding: '0.5rem 2rem', background: '#d4a574', color: 'white', border: 'none', borderRadius: '20px', cursor: 'pointer', fontSize: '1rem' }}>Close</button>
+                  style={{ marginTop: '1rem', padding: '0.5rem 2rem', background: '#e91e8c', color: 'white', border: 'none', borderRadius: '20px', cursor: 'pointer', fontSize: '1rem' }}>Close</button>
               </div>
             </motion.div>
           </motion.div>
