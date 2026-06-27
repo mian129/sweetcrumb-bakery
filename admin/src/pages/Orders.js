@@ -181,7 +181,7 @@ const Orders = () => {
                 </div>
               ))}
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 0', fontWeight: '700', fontSize: '1.1rem' }}>
-                <span>Total</span><span style={{ color: '#d4a574' }}>Rs. {selectedOrder.totalAmount}</span>
+                <span>Total</span><span style={{ color: '#e91e8c' }}>Rs. {selectedOrder.totalAmount}</span>
               </div>
             </div>
 
