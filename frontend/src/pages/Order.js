@@ -10,7 +10,7 @@ const Order = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imgErrors, setImgErrors] = useState({});
-  const [settings, setSettings] = useState({ deliveryCharges: 50, bankName: '', accountTitle: '', accountNumber: '', iban: '', branchCode: '', bankInstructions: '' });
+  const [settings, setSettings] = useState({ deliveryCharges: 50, bankName: '', accountTitle: '', accountNumber: '', iban: '', branchCode: '', bankInstructions: '', bankAccounts: [] });
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', address: '', city: '', postalCode: '',
     paymentMethod: 'bank', specialInstructions: '', transactionId: ''
@@ -299,7 +299,22 @@ const Order = () => {
                 </p>
               </div>
 
-              {settings.bankName && (
+              {settings.bankAccounts && settings.bankAccounts.length > 0 ? (
+                <div style={{ padding: '1rem', background: '#f8f9fa', borderRadius: '10px', marginTop: '0.8rem', border: '1px solid #e9ecef' }}>
+                  <p style={{ fontSize: '0.85rem', fontWeight: '600', color: '#880e4f', marginBottom: '0.5rem' }}>🏦 Bank Transfer Details:</p>
+                  {settings.bankAccounts.map((acc, i) => (
+                    <div key={i} style={{ padding: '0.6rem', background: 'white', borderRadius: '8px', marginBottom: i < settings.bankAccounts.length - 1 ? '0.5rem' : 0, border: '1px solid #eee' }}>
+                      {settings.bankAccounts.length > 1 && <p style={{ fontSize: '0.75rem', fontWeight: '700', color: '#e91e8c', marginBottom: '0.3rem' }}>Account #{i + 1}</p>}
+                      {acc.bankName && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.15rem 0' }}>Bank: <strong>{acc.bankName}</strong></p>}
+                      {acc.accountTitle && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.15rem 0' }}>Title: <strong>{acc.accountTitle}</strong></p>}
+                      {acc.accountNumber && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.15rem 0' }}>A/C: <strong>{acc.accountNumber}</strong></p>}
+                      {acc.iban && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.15rem 0' }}>IBAN: <strong>{acc.iban}</strong></p>}
+                      {acc.branchCode && <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.15rem 0' }}>Branch: <strong>{acc.branchCode}</strong></p>}
+                    </div>
+                  ))}
+                  {settings.bankInstructions && <p style={{ fontSize: '0.75rem', color: '#e91e8c', marginTop: '0.5rem', fontStyle: 'italic' }}>{settings.bankInstructions}</p>}
+                </div>
+              ) : settings.bankName && (
                 <div style={{ padding: '1rem', background: '#f8f9fa', borderRadius: '10px', marginTop: '0.8rem', border: '1px solid #e9ecef' }}>
                   <p style={{ fontSize: '0.85rem', fontWeight: '600', color: '#880e4f', marginBottom: '0.5rem' }}>🏦 Bank Details:</p>
                   <p style={{ fontSize: '0.8rem', color: '#666', margin: '0.2rem 0' }}>Bank: <strong>{settings.bankName}</strong></p>

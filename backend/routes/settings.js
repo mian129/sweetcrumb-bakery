@@ -13,7 +13,36 @@ router.get('/', async (req, res) => {
       settings = created;
     }
 
-    res.json(snakeToCamel(settings));
+    const camel = snakeToCamel(settings);
+
+    // Parse bankAccounts from bank_instructions if it's JSON
+    if (camel.bankInstructions) {
+      try {
+        const parsed = JSON.parse(camel.bankInstructions);
+        if (parsed._bankAccounts) {
+          camel.bankAccounts = parsed._bankAccounts;
+          camel.bankInstructions = parsed._bankInstructions || '';
+        }
+      } catch (e) {
+        // Not JSON, keep as is
+      }
+    }
+
+    if (!camel.bankAccounts) {
+      camel.bankAccounts = [];
+      // Build from legacy fields if they exist
+      if (camel.bankName || camel.accountNumber) {
+        camel.bankAccounts = [{
+          bankName: camel.bankName || '',
+          accountTitle: camel.accountTitle || '',
+          accountNumber: camel.accountNumber || '',
+          iban: camel.iban || '',
+          branchCode: camel.branchCode || ''
+        }];
+      }
+    }
+
+    res.json(camel);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -28,16 +57,39 @@ router.put('/', auth, async (req, res) => {
       settings = created;
     }
 
-    const { deliveryCharges, bankName, accountTitle, accountNumber, iban, branchCode, bankInstructions } = req.body;
+    const { deliveryCharges, bankName, accountTitle, accountNumber, iban, branchCode, bankInstructions, bankAccounts } = req.body;
 
     const updates = {};
     if (deliveryCharges !== undefined) updates.delivery_charges = deliveryCharges;
-    if (bankName !== undefined) updates.bank_name = bankName;
-    if (accountTitle !== undefined) updates.account_title = accountTitle;
-    if (accountNumber !== undefined) updates.account_number = accountNumber;
-    if (iban !== undefined) updates.iban = iban;
-    if (branchCode !== undefined) updates.branch_code = branchCode;
-    if (bankInstructions !== undefined) updates.bank_instructions = bankInstructions;
+
+    // Store bankAccounts and bankInstructions together in bank_instructions as JSON
+    if (bankAccounts !== undefined) {
+      updates.bank_instructions = JSON.stringify({ _bankAccounts: bankAccounts, _bankInstructions: bankInstructions || '' });
+    } else {
+      if (bankInstructions !== undefined) {
+        // Just updating instructions text, keep existing bank accounts
+        let existing = {};
+        try { existing = JSON.parse(settings.bank_instructions || '{}'); } catch(e) {}
+        updates.bank_instructions = JSON.stringify({ _bankAccounts: existing._bankAccounts || [], _bankInstructions: bankInstructions });
+      }
+    }
+
+    // Also update legacy fields with first account for backward compatibility
+    if (bankAccounts && bankAccounts.length > 0) {
+      const first = bankAccounts[0];
+      if (first.bankName !== undefined) updates.bank_name = first.bankName;
+      if (first.accountTitle !== undefined) updates.account_title = first.accountTitle;
+      if (first.accountNumber !== undefined) updates.account_number = first.accountNumber;
+      if (first.iban !== undefined) updates.iban = first.iban;
+      if (first.branchCode !== undefined) updates.branch_code = first.branchCode;
+    } else {
+      if (bankName !== undefined) updates.bank_name = bankName;
+      if (accountTitle !== undefined) updates.account_title = accountTitle;
+      if (accountNumber !== undefined) updates.account_number = accountNumber;
+      if (iban !== undefined) updates.iban = iban;
+      if (branchCode !== undefined) updates.branch_code = branchCode;
+    }
+
     updates.updated_at = new Date().toISOString();
 
     const { data: updated, error } = await supabase.from('settings').update(updates).eq('id', settings.id).select().single();
