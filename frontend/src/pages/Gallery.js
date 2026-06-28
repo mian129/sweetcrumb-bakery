@@ -4,7 +4,7 @@ import { FaImage } from 'react-icons/fa';
 import api from '../api';
 
 const ITEMS_PER_PAGE = 9;
-const CATEGORIES = ['all', 'cookies', 'cupcakes', 'cakes', 'pastries'];
+const CATEGORIES = ['all', 'cookies', 'cupcakes', 'cakes', 'pastries', 'brownies'];
 
 const Gallery = () => {
   const [allImages, setAllImages] = useState([]);

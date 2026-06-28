@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import api from '../api';
 
-const categories = ['all', 'cookies', 'cupcakes', 'cakes', 'pastries'];
+const categories = ['all', 'cookies', 'cupcakes', 'cakes', 'pastries', 'brownies'];
 
 const Menu = () => {
   const [products, setProducts] = useState([]);

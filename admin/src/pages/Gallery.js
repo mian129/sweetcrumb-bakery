@@ -128,6 +128,7 @@ const Gallery = () => {
               <option value="cupcakes">Cupcakes</option>
               <option value="cakes">Cakes</option>
               <option value="pastries">Pastries</option>
+              <option value="brownies">Brownies</option>
               <option value="other">Other</option>
             </select>
           </div>
