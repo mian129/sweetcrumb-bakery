@@ -5,21 +5,6 @@ import api from '../api';
 const ITEMS_PER_PAGE = 9;
 const CATEGORIES = ['all', 'cookies', 'cupcakes', 'cakes', 'pastries'];
 
-const fallbackImages = [
-  { id: 'f1', src: 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'cookies', title: 'Sugar Cookies' },
-  { id: 'f2', src: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'cupcakes', title: 'Vanilla Cupcakes' },
-  { id: 'f3', src: 'https://images.pexels.com/photos/1721932/pexels-photo-1721932.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'cakes', title: 'Wedding Cake' },
-  { id: 'f4', src: 'https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'cupcakes', title: 'Red Velvet' },
-  { id: 'f5', src: 'https://images.pexels.com/photos/1408310/pexels-photo-1408310.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'cakes', title: 'Birthday Cake' },
-  { id: 'f6', src: 'https://images.pexels.com/photos/2067626/pexels-photo-2067626.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'pastries', title: 'Croissants' },
-  { id: 'f7', src: 'https://images.pexels.com/photos/205961/pexels-photo-205961.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'pastries', title: 'Chocolate Brownies' },
-  { id: 'f8', src: 'https://images.pexels.com/photos/1775043/pexels-photo-1775043.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'pastries', title: 'Artisan Bread' },
-  { id: 'f9', src: 'https://images.pexels.com/photos/3724353/pexels-photo-3724353.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'pastries', title: 'Cinnamon Rolls' },
-  { id: 'f10', src: 'https://images.pexels.com/photos/3251534/pexels-photo-3251534.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'other', title: 'Our Bakery' },
-  { id: 'f11', src: 'https://images.pexels.com/photos/1919211/pexels-photo-1919211.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'cookies', title: 'Cookie Display' },
-  { id: 'f12', src: 'https://images.pexels.com/photos/2649403/pexels-photo-2649403.jpeg?auto=compress&cs=tinysrgb&w=600', category: 'cupcakes', title: 'Cupcake Tower' }
-];
-
 const Gallery = () => {
   const [allImages, setAllImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -33,11 +18,9 @@ const Gallery = () => {
         const res = await api.get('/api/gallery');
         if (res.data && res.data.length > 0) {
           setAllImages(res.data);
-        } else {
-          setAllImages(fallbackImages);
         }
       } catch {
-        setAllImages(fallbackImages);
+        setAllImages([]);
       }
     };
     fetchImages();
@@ -92,7 +75,7 @@ const Gallery = () => {
 
         {filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: '4rem 2rem', color: '#666' }}>
-            <p style={{ fontSize: '1.1rem' }}>No images in this category.</p>
+            <p style={{ fontSize: '1.1rem' }}>Gallery is empty. Add photos from admin panel.</p>
           </div>
         )}
 
@@ -121,7 +104,7 @@ const Gallery = () => {
             <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '800px', width: '100%' }}>
               <img src={imgErrors[selectedImage.id] || selectedImage.src} alt={selectedImage.title}
-                onError={(e) => { e.target.src = 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg?auto=compress&cs=tinysrgb&w=800'; }}
+                onError={(e) => { e.target.style.display = 'none'; }}
                 style={{ width: '100%', borderRadius: '16px' }} />
               <div style={{ position: 'absolute', bottom: '-60px', left: 0, right: 0, textAlign: 'center' }}>
                 <h3 style={{ color: 'white', fontSize: '1.5rem' }}>{selectedImage.title}</h3>
