@@ -19,7 +19,7 @@ const Contact = () => {
         <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '300px' }}>
           <h2 style={{ fontSize: '2rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '2rem' }}>Get In Touch</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {[{ icon: '📍', title: 'Address', content: 'Faisalabad, Pakistan' }, { icon: '✉️', title: 'Email', content: 'Sweetcrumb099@gmail.com' }, { icon: '⏰', title: 'Hours', content: '9am - 10pm\nMonday - Sunday' }].map((info, i) => (
+            {[{ icon: '📍', title: 'Address', content: 'Faisalabad, Pakistan' }, { icon: '📞', title: 'Phone', content: '0326 763 3796' }, { icon: '✉️', title: 'Email', content: 'Sweetcrumb099@gmail.com' }, { icon: '⏰', title: 'Hours', content: '9am - 10pm\nMonday - Sunday' }].map((info, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true }}
                 style={{ display: 'flex', gap: '1rem', padding: '1.5rem', background: 'white', borderRadius: '16px', boxShadow: '0 5px 20px rgba(0,0,0,0.05)' }}>
                 <span style={{ fontSize: '1.5rem' }}>{info.icon}</span>

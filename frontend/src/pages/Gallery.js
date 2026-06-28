@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { FaImage } from 'react-icons/fa';
 import api from '../api';
 
 const ITEMS_PER_PAGE = 9;
@@ -60,9 +61,17 @@ const Gallery = () => {
                 transition={{ duration: 0.5, delay: i * 0.08 }} whileHover={{ y: -10, scale: 1.02 }}
                 onClick={() => setSelectedImage(img)}
                 style={{ borderRadius: '20px', overflow: 'hidden', cursor: 'pointer', position: 'relative', aspectRatio: '1' }}>
-                <img src={imgErrors[img.id] || img.src} alt={img.title}
-                  onError={() => setImgErrors(prev => ({ ...prev, [img.id]: true }))}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                {!imgErrors[img.id] && (
+                  <img src={img.src} alt={img.title} crossOrigin="anonymous"
+                    onError={() => setImgErrors(prev => ({ ...prev, [img.id]: true }))}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                )}
+                {imgErrors[img.id] && (
+                  <div style={{ width: '100%', height: '100%', background: '#fce4ec', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', color: '#880e4f' }}>
+                    <FaImage size={40} style={{ marginBottom: '0.5rem', opacity: 0.5 }} />
+                    <p style={{ fontSize: '0.9rem' }}>{img.title || 'Image'}</p>
+                  </div>
+                )}
                 <motion.div initial={{ opacity: 0 }} whileHover={{ opacity: 1 }}
                   style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '2rem 1.5rem 1.5rem', background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', color: 'white' }}>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: '600' }}>{img.title}</h3>
@@ -103,7 +112,7 @@ const Gallery = () => {
             style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem', cursor: 'pointer' }}>
             <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '800px', width: '100%' }}>
-              <img src={imgErrors[selectedImage.id] || selectedImage.src} alt={selectedImage.title}
+              <img src={selectedImage.src} alt={selectedImage.title} crossOrigin="anonymous"
                 onError={(e) => { e.target.style.display = 'none'; }}
                 style={{ width: '100%', borderRadius: '16px' }} />
               <div style={{ position: 'absolute', bottom: '-60px', left: 0, right: 0, textAlign: 'center' }}>

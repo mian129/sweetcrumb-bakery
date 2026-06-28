@@ -96,6 +96,7 @@ const Footer = () => {
         <div>
           <h4 style={{ color: '#fce4ec', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Contact</h4>
           <div style={{ color: '#f8bbd0', lineHeight: 2 }}>
+            <p>📞 0326 763 3796</p>
             <p>📍 Faisalabad, Pakistan</p>
             <p>✉️ Sweetcrumb099@gmail.com</p>
           </div>
