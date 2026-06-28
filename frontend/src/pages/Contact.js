@@ -59,7 +59,7 @@ const Contact = () => {
       <section style={{ padding: '0 5% 5rem' }}>
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
           style={{ maxWidth: '1200px', margin: '0 auto', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 15px 40px rgba(0,0,0,0.1)' }}>
-          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d196232.64391791645!2d-105.14476642353748!3d39.60886199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x876b8a4b3b3b3b3b%3A0x3b3b3b3b3b3b3b3b!2sSouth%20Denver%2C%20CO!5e0!3m2!1sen!2sus!4v1234567890"
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d113852.2954206525!2d73.0176644!3d31.4503999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x392242a597571a87%3A0xc54186ef991193df!2sFaisalabad%2C%20Punjab%2C%20Pakistan!5e0!3m2!1sen!2s!4v1234567890"
             width="100%" height="400" style={{ border: 0 }} allowFullScreen="" loading="lazy" title="Our Location" />
         </motion.div>
       </section>
