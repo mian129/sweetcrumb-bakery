@@ -62,7 +62,7 @@ const Gallery = () => {
                 onClick={() => setSelectedImage(img)}
                 style={{ borderRadius: '20px', overflow: 'hidden', cursor: 'pointer', position: 'relative', aspectRatio: '1' }}>
                 {!imgErrors[img.id] && (
-                  <img src={img.src} alt={img.title} crossOrigin="anonymous"
+                  <img src={img.src} alt={img.title}
                     onError={() => setImgErrors(prev => ({ ...prev, [img.id]: true }))}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 )}
@@ -112,7 +112,7 @@ const Gallery = () => {
             style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem', cursor: 'pointer' }}>
             <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()} style={{ position: 'relative', maxWidth: '800px', width: '100%' }}>
-              <img src={selectedImage.src} alt={selectedImage.title} crossOrigin="anonymous"
+              <img src={selectedImage.src} alt={selectedImage.title}
                 onError={(e) => { e.target.style.display = 'none'; }}
                 style={{ width: '100%', borderRadius: '16px' }} />
               <div style={{ position: 'absolute', bottom: '-60px', left: 0, right: 0, textAlign: 'center' }}>
