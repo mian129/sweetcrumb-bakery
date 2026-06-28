@@ -173,7 +173,7 @@ const Home = () => {
         </motion.div>
       </section>
 
-      <section style={{ padding: '7rem 5%', background: 'white' }}>
+      <section style={{ padding: 'clamp(2rem, 5vw, 7rem) 5%', background: 'white' }}>
         <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} style={{ textAlign: 'center', marginBottom: '4rem' }}>
           <motion.span initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.2 }} viewport={{ once: true }}
             style={{ display: 'inline-block', padding: '0.5rem 1.5rem', background: '#fff5f7', color: '#e91e8c', borderRadius: '25px', fontSize: '0.9rem', fontWeight: '600', marginBottom: '1rem' }}>Our Specialties</motion.span>

@@ -44,7 +44,7 @@ const Menu = () => {
       </section>
 
       <section style={{ padding: '2rem 5% 5rem' }}>
-        <motion.div layout style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', maxWidth: '1300px', margin: '0 auto' }}>
+        <motion.div layout className="menu-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', maxWidth: '1300px', margin: '0 auto' }}>
           {filteredProducts.length > 0 ? (
             <AnimatePresence mode="popLayout">
               {filteredProducts.map((product, i) => (
