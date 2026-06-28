@@ -6,7 +6,7 @@ const { snakeToCamel } = require('../utils/helpers');
 
 router.get('/', async (req, res) => {
   try {
-    let { data: settings } = await supabase.from('settings').select('*').limit(1).single();
+    let { data: settings } = await supabase.from('settings').select('*').order('updated_at', { ascending: false }).limit(1).single();
 
     if (!settings) {
       const { data: created } = await supabase.from('settings').insert({}).select().single();
@@ -30,7 +30,6 @@ router.get('/', async (req, res) => {
 
     if (!camel.bankAccounts) {
       camel.bankAccounts = [];
-      // Build from legacy fields if they exist
       if (camel.bankName || camel.accountNumber) {
         camel.bankAccounts = [{
           bankName: camel.bankName || '',
@@ -50,7 +49,7 @@ router.get('/', async (req, res) => {
 
 router.put('/', auth, async (req, res) => {
   try {
-    let { data: settings } = await supabase.from('settings').select('*').limit(1).single();
+    let { data: settings } = await supabase.from('settings').select('*').order('updated_at', { ascending: false }).limit(1).single();
 
     if (!settings) {
       const { data: created } = await supabase.from('settings').insert({}).select().single();
