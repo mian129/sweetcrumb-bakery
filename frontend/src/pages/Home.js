@@ -181,7 +181,7 @@ const Home = () => {
         </motion.div>
         <div className="home-products-grid">
           {allProducts.length > 0 ? allProducts.slice(0, 9).map((product, i) => (
-            <AnimatedCard key={product._id} image={product.image} title={product.name} desc={product.description} price={`Rs. ${product.price}`} delay={i * 0.1} productId={product._id} />
+            <AnimatedCard key={product.id} image={product.image} title={product.name} desc={product.description} price={`Rs. ${product.price}`} delay={i * 0.1} productId={product.id} />
           )) : (
             <p style={{ textAlign: 'center', color: '#666', gridColumn: '1 / -1', padding: '3rem' }}>No products yet. Add products from the admin panel!</p>
           )}

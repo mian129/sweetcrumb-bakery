@@ -48,14 +48,14 @@ const Menu = () => {
           {filteredProducts.length > 0 ? (
             <AnimatePresence mode="popLayout">
               {filteredProducts.map((product, i) => (
-                <motion.div key={product._id} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
+                <motion.div key={product.id} layout initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}                   whileHover={{ y: -15, boxShadow: '0 25px 50px rgba(233, 30, 140, 0.3)' }}
                   style={{ background: 'white', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.08)', cursor: 'pointer' }}>
                   <motion.div whileHover={{ scale: 1.08 }} transition={{ duration: 0.4 }} style={{ height: '280px', overflow: 'hidden', background: '#fff5f7' }}>
                     <img
-                      src={imgErrors[product._id] || !product.image ? placeholderImg : product.image}
+                      src={imgErrors[product.id] || !product.image ? placeholderImg : product.image}
                       alt={product.name}
-                      onError={() => setImgErrors(prev => ({ ...prev, [product._id]: true }))}
+                      onError={() => setImgErrors(prev => ({ ...prev, [product.id]: true }))}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   </motion.div>

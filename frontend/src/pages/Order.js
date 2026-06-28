@@ -21,7 +21,7 @@ const Order = () => {
     const fetchProducts = async () => {
       try {
         const res = await api.get('/api/products');
-        setMenuItems(res.data.map(p => ({ _id: p._id, name: p.name, price: p.price, image: p.image })));
+        setMenuItems(res.data.map(p => ({ _id: p.id, name: p.name, price: p.price, image: p.image })));
       } catch (err) {
         console.log('Could not fetch products');
       }
@@ -39,18 +39,18 @@ const Order = () => {
   }, []);
 
   const addToCart = (item) => {
-    const existing = cart.find(c => c._id === item._id);
+    const existing = cart.find(c => c.id === item.id);
     if (existing) {
-      setCart(cart.map(c => c._id === item._id ? { ...c, qty: c.qty + 1 } : c));
+      setCart(cart.map(c => c.id === item.id ? { ...c, qty: c.qty + 1 } : c));
     } else {
       setCart([...cart, { ...item, qty: 1 }]);
     }
   };
 
-  const removeFromCart = (id) => setCart(cart.filter(c => c._id !== id));
+  const removeFromCart = (id) => setCart(cart.filter(c => c.id !== id));
 
   const updateQty = (id, delta) => {
-    setCart(cart.map(c => c._id === id ? { ...c, qty: Math.max(0, c.qty + delta) } : c).filter(c => c.qty > 0));
+    setCart(cart.map(c => c.id === id ? { ...c, qty: Math.max(0, c.qty + delta) } : c).filter(c => c.qty > 0));
   };
 
   const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
@@ -77,7 +77,7 @@ const Order = () => {
         postalCode: formData.postalCode,
         paymentMethod: formData.paymentMethod,
         transactionId: formData.transactionId,
-        items: cart.map(item => ({ product: item._id, name: item.name, price: item.price, quantity: item.qty })),
+        items: cart.map(item => ({ product: item.id, name: item.name, price: item.price, quantity: item.qty })),
         totalAmount: total,
         specialInstructions: formData.specialInstructions
       };
@@ -138,11 +138,11 @@ const Order = () => {
               {menuItems.length > 0 ? (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.2rem' }}>
                   {menuItems.map((item, i) => (
-                    <motion.div key={item._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                    <motion.div key={item.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                       whileHover={{ y: -5 }} style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 5px 15px rgba(0,0,0,0.08)' }}>
                       <div style={{ height: '150px', overflow: 'hidden', background: '#fff5f7' }}>
-                        <img src={imgErrors[item._id] || !item.image ? placeholderImg : item.image} alt={item.name}
-                          onError={() => setImgErrors(prev => ({ ...prev, [item._id]: true }))}
+                        <img src={imgErrors[item.id] || !item.image ? placeholderImg : item.image} alt={item.name}
+                          onError={() => setImgErrors(prev => ({ ...prev, [item.id]: true }))}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </div>
                       <div style={{ padding: '1rem' }}>
@@ -167,21 +167,21 @@ const Order = () => {
                 {cart.length === 0 ? (
                   <p style={{ color: '#999', textAlign: 'center', padding: '1.5rem 0' }}>Cart khaali hai</p>
                 ) : cart.map((item) => (
-                  <motion.div key={item._id} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
+                  <motion.div key={item.id} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                     style={{ display: 'flex', gap: '0.8rem', padding: '0.8rem 0', borderBottom: '1px solid #eee', alignItems: 'center' }}>
-                    <img src={imgErrors[item._id] || !item.image ? placeholderImg : item.image} alt={item.name}
-                      onError={() => setImgErrors(prev => ({ ...prev, [item._id]: true }))}
+                    <img src={imgErrors[item.id] || !item.image ? placeholderImg : item.image} alt={item.name}
+                      onError={() => setImgErrors(prev => ({ ...prev, [item.id]: true }))}
                       style={{ width: '50px', height: '50px', borderRadius: '8px', objectFit: 'cover' }} />
                     <div style={{ flex: 1 }}>
                       <h4 style={{ fontSize: '0.85rem', color: '#880e4f' }}>{item.name}</h4>
                       <p style={{ color: '#e91e8c', fontWeight: '600', fontSize: '0.9rem' }}>Rs. {item.price * item.qty}</p>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <button onClick={() => updateQty(item._id, -1)} style={{ width: '24px', height: '24px', border: '1px solid #ddd', borderRadius: '4px', background: 'white', cursor: 'pointer' }}>-</button>
+                      <button onClick={() => updateQty(item.id, -1)} style={{ width: '24px', height: '24px', border: '1px solid #ddd', borderRadius: '4px', background: 'white', cursor: 'pointer' }}>-</button>
                       <span style={{ width: '20px', textAlign: 'center', fontWeight: '600', fontSize: '0.85rem' }}>{item.qty}</span>
-                      <button onClick={() => updateQty(item._id, 1)} style={{ width: '24px', height: '24px', border: '1px solid #ddd', borderRadius: '4px', background: 'white', cursor: 'pointer' }}>+</button>
+                      <button onClick={() => updateQty(item.id, 1)} style={{ width: '24px', height: '24px', border: '1px solid #ddd', borderRadius: '4px', background: 'white', cursor: 'pointer' }}>+</button>
                     </div>
-                    <button onClick={() => removeFromCart(item._id)} style={{ background: 'none', border: 'none', color: '#e74c3c', cursor: 'pointer', fontSize: '1rem' }}>×</button>
+                    <button onClick={() => removeFromCart(item.id)} style={{ background: 'none', border: 'none', color: '#e74c3c', cursor: 'pointer', fontSize: '1rem' }}>×</button>
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -276,7 +276,7 @@ const Order = () => {
             <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} style={{ flex: '1', minWidth: '300px', background: 'white', borderRadius: '20px', padding: '1.5rem', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', height: 'fit-content', position: 'sticky', top: '120px' }}>
               <h2 style={{ fontSize: '1.3rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '1rem', paddingBottom: '0.8rem', borderBottom: '2px solid #eee' }}>Order Summary</h2>
               {cart.map((item) => (
-                <div key={item._id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid #f5f5f5' }}>
+                <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid #f5f5f5' }}>
                   <span style={{ color: '#666' }}>{item.name} x {item.qty}</span>
                   <span style={{ fontWeight: '600' }}>Rs. {item.price * item.qty}</span>
                 </div>

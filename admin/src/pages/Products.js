@@ -47,7 +47,7 @@ const Products = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
       if (editingProduct) {
-        await api.put(`/api/products/${editingProduct._id}`, formData, config);
+        await api.put(`/api/products/${editingProduct.id}`, formData, config);
       } else {
         await api.post('/api/products', formData, config);
       }
@@ -112,12 +112,12 @@ const Products = () => {
           </thead>
           <tbody>
             {products.map(product => (
-              <tr key={product._id}>
+              <tr key={product.id}>
                 <td>
                   <img
-                    src={imgErrors[product._id] || !product.image ? placeholderImg : product.image}
+                    src={imgErrors[product.id] || !product.image ? placeholderImg : product.image}
                     alt={product.name}
-                    onError={() => setImgErrors(prev => ({ ...prev, [product._id]: true }))}
+                    onError={() => setImgErrors(prev => ({ ...prev, [product.id]: true }))}
                     style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px' }}
                   />
                 </td>
@@ -129,7 +129,7 @@ const Products = () => {
                   <button className="btn btn-primary" style={{ marginRight: '0.5rem' }} onClick={() => handleEdit(product)}>
                     <FaEdit />
                   </button>
-                  <button className="btn btn-danger" onClick={() => handleDelete(product._id)}>
+                  <button className="btn btn-danger" onClick={() => handleDelete(product.id)}>
                     <FaTrash />
                   </button>
                 </td>

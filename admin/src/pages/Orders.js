@@ -79,9 +79,9 @@ const Orders = () => {
           </thead>
           <tbody>
             {orders.map(order => (
-              <tr key={order._id} onClick={() => setSelectedOrder(order)} style={{ cursor: 'pointer' }}>
+              <tr key={order.id} onClick={() => setSelectedOrder(order)} style={{ cursor: 'pointer' }}>
                 <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                  #{order._id.slice(-6).toUpperCase()}
+                  #{order.id.slice(-6).toUpperCase()}
                 </td>
                 <td>
                   <strong>{order.customerName}</strong>
@@ -114,7 +114,7 @@ const Orders = () => {
                 <td style={{ fontSize: '0.85rem' }}>{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td onClick={(e) => e.stopPropagation()}>
                   <select
-                    onChange={(e) => updateStatus(order._id, e.target.value)}
+                    onChange={(e) => updateStatus(order.id, e.target.value)}
                     style={{ padding: '0.3rem', borderRadius: '4px', border: '1px solid #ddd', fontSize: '0.8rem' }}
                   >
                     <option value="">Update Status</option>
@@ -141,7 +141,7 @@ const Orders = () => {
         <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
             <div className="modal-header">
-              <h2>Order #{selectedOrder._id.slice(-6).toUpperCase()}</h2>
+              <h2>Order #{selectedOrder.id.slice(-6).toUpperCase()}</h2>
               <button className="modal-close" onClick={() => setSelectedOrder(null)}>×</button>
             </div>
 
@@ -196,7 +196,7 @@ const Orders = () => {
               <h4 style={{ color: '#999', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Update Status</h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                 {getStatusOptions(selectedOrder.status).map(status => (
-                  <button key={status} onClick={() => { updateStatus(selectedOrder._id, status); setSelectedOrder({ ...selectedOrder, status }); }}
+                  <button key={status} onClick={() => { updateStatus(selectedOrder.id, status); setSelectedOrder({ ...selectedOrder, status }); }}
                     style={{ padding: '0.4rem 0.8rem', borderRadius: '6px', border: '1px solid #ddd', background: 'white', cursor: 'pointer', fontSize: '0.8rem', textTransform: 'capitalize' }}>
                     {status.replace('_', ' ')}
                   </button>

@@ -104,7 +104,7 @@ const Dashboard = () => {
           </thead>
           <tbody>
             {recentOrders.map(order => (
-              <tr key={order._id}>
+              <tr key={order.id}>
                 <td>
                   <strong>{order.customerName}</strong>
                   <br />
