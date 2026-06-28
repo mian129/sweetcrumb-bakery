@@ -50,3 +50,12 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 
 INSERT INTO settings (delivery_charges) VALUES (50) ON CONFLICT DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS gallery (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  src TEXT NOT NULL,
+  title TEXT DEFAULT '',
+  category TEXT DEFAULT 'other',
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);

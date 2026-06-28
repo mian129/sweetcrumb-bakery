@@ -19,7 +19,7 @@ const Contact = () => {
         <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '300px' }}>
           <h2 style={{ fontSize: '2rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '2rem' }}>Get In Touch</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {[{ icon: '📍', title: 'Address', content: 'Faisalabad, Pakistan' }, { icon: '✉️', title: 'Email', content: 'Sweetcrumb099@gmail.com' }, { icon: '⏰', title: 'Hours', content: 'Tue-Sat: 7am-6pm\nSun: 8am-3pm' }].map((info, i) => (
+            {[{ icon: '📍', title: 'Address', content: 'Faisalabad, Pakistan' }, { icon: '✉️', title: 'Email', content: 'Sweetcrumb099@gmail.com' }, { icon: '⏰', title: 'Hours', content: '9am - 10pm\nMonday - Sunday' }].map((info, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -30 }} whileInView={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} viewport={{ once: true }}
                 style={{ display: 'flex', gap: '1rem', padding: '1.5rem', background: 'white', borderRadius: '16px', boxShadow: '0 5px 20px rgba(0,0,0,0.05)' }}>
                 <span style={{ fontSize: '1.5rem' }}>{info.icon}</span>
@@ -33,19 +33,19 @@ const Contact = () => {
           </motion.div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '350px' }}>
-          <form onSubmit={handleSubmit} style={{ background: 'white', padding: '2.5rem', borderRadius: '24px', boxShadow: '0 15px 40px rgba(0,0,0,0.1)' }}>
+        <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '300px', maxWidth: '100%', overflow: 'hidden' }}>
+          <form onSubmit={handleSubmit} style={{ background: 'white', padding: '2.5rem', borderRadius: '24px', boxShadow: '0 15px 40px rgba(0,0,0,0.1)', boxSizing: 'border-box' }}>
             <h3 style={{ fontSize: '1.5rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '1.5rem' }}>Send us a message</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+            <div style={{ marginBottom: '1rem' }}>
               <input type="text" placeholder="Your Name" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                style={{ padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none' }} />
+                style={{ width: '100%', padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', marginBottom: '0.8rem' }} />
               <input type="email" placeholder="Your Email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                style={{ padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none' }} />
+                style={{ width: '100%', padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none', boxSizing: 'border-box', marginBottom: '0.8rem' }} />
             </div>
             <input type="tel" placeholder="Phone Number" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              style={{ width: '100%', padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none', marginBottom: '1rem', boxSizing: 'border-box' }} />
+              style={{ width: '100%', padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none', marginBottom: '0.8rem', boxSizing: 'border-box' }} />
             <input type="text" placeholder="Subject" value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-              style={{ width: '100%', padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none', marginBottom: '1rem', boxSizing: 'border-box' }} />
+              style={{ width: '100%', padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none', marginBottom: '0.8rem', boxSizing: 'border-box' }} />
             <textarea placeholder="Your Message" rows="5" required value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               style={{ width: '100%', padding: '1rem', border: '2px solid #eee', borderRadius: '12px', fontSize: '1rem', outline: 'none', marginBottom: '1.5rem', resize: 'vertical', fontFamily: 'inherit', boxSizing: 'border-box' }} />
             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit"

@@ -12,6 +12,7 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/orders', require('./routes/orders'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/settings', require('./routes/settings'));
+app.use('/api/gallery', require('./routes/gallery'));
 
 app.get('/', (req, res) => res.json({ message: 'Sweet Crumb API Running' }));
 

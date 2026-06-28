@@ -165,7 +165,7 @@ const Order = () => {
               <h2 style={{ fontSize: '1.3rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '1rem', paddingBottom: '0.8rem', borderBottom: '2px solid #eee' }}>Your Cart ({cart.length})</h2>
               <AnimatePresence>
                 {cart.length === 0 ? (
-                  <p style={{ color: '#999', textAlign: 'center', padding: '1.5rem 0' }}>Cart khaali hai</p>
+                  <p style={{ color: '#999', textAlign: 'center', padding: '1.5rem 0' }}>Your cart is empty</p>
                 ) : cart.map((item) => (
                   <motion.div key={item.id} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                     style={{ display: 'flex', gap: '0.8rem', padding: '0.8rem 0', borderBottom: '1px solid #eee', alignItems: 'center' }}>

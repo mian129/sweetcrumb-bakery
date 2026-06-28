@@ -87,10 +87,8 @@ const Footer = () => {
         <div>
           <h4 style={{ color: '#fce4ec', marginBottom: '1.5rem', fontSize: '1.1rem' }}>Hours</h4>
           <div style={{ color: '#f8bbd0', lineHeight: 2 }}>
-            <p>Tuesday - Friday: 7am - 6pm</p>
-            <p>Saturday: 8am - 5pm</p>
-            <p>Sunday: 8am - 3pm</p>
-            <p>Monday: Closed</p>
+            <p>9am - 10pm</p>
+            <p>Monday - Sunday</p>
           </div>
         </div>
 

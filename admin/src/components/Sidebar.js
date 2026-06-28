@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaHome, FaBox, FaShoppingCart, FaCog, FaSignOutAlt } from 'react-icons/fa';
+import { FaHome, FaBox, FaShoppingCart, FaCog, FaSignOutAlt, FaImage } from 'react-icons/fa';
 
 const Sidebar = ({ user, onLogout }) => {
   return (
@@ -24,6 +24,11 @@ const Sidebar = ({ user, onLogout }) => {
         <li>
           <NavLink to="/orders">
             <FaShoppingCart /> Orders
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to="/gallery">
+            <FaImage /> Gallery
           </NavLink>
         </li>
         <li>
