@@ -34,6 +34,21 @@ const Orders = () => {
     }
   };
 
+  const deleteOrder = async (orderId) => {
+    if (!window.confirm('Ye order permanently delete ho jayega. Pakka karna chahte ho?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      await api.delete(`/api/orders/${orderId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSelectedOrder(null);
+      fetchOrders();
+    } catch (err) {
+      console.error(err);
+      alert('Delete failed');
+    }
+  };
+
   const getStatusOptions = (currentStatus) => {
     const allStatuses = ['pending', 'confirmed', 'preparing', 'out_for_delivery', 'delivered', 'cancelled'];
     return allStatuses.filter(s => s !== currentStatus);
@@ -113,17 +128,22 @@ const Orders = () => {
                 </td>
                 <td style={{ fontSize: '0.85rem' }}>{new Date(order.createdAt).toLocaleDateString()}</td>
                 <td onClick={(e) => e.stopPropagation()}>
-                  <select
-                    onChange={(e) => updateStatus(order.id, e.target.value)}
-                    style={{ padding: '0.3rem', borderRadius: '4px', border: '1px solid #ddd', fontSize: '0.8rem' }}
-                  >
-                    <option value="">Update Status</option>
-                    {getStatusOptions(order.status).map(status => (
-                      <option key={status} value={status}>
-                        {status.replace('_', ' ').charAt(0).toUpperCase() + status.replace('_', ' ').slice(1)}
-                      </option>
-                    ))}
-                  </select>
+                  <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
+                    <select
+                      onChange={(e) => updateStatus(order.id, e.target.value)}
+                      style={{ padding: '0.3rem', borderRadius: '4px', border: '1px solid #ddd', fontSize: '0.8rem' }}
+                    >
+                      <option value="">Update Status</option>
+                      {getStatusOptions(order.status).map(status => (
+                        <option key={status} value={status}>
+                          {status.replace('_', ' ').charAt(0).toUpperCase() + status.replace('_', ' ').slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                    <button onClick={() => deleteOrder(order.id)}
+                      style={{ padding: '0.3rem 0.6rem', background: '#ff5252', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600' }}
+                      title="Delete order">🗑</button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -193,7 +213,13 @@ const Orders = () => {
             )}
 
             <div>
-              <h4 style={{ color: '#999', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Update Status</h4>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                <h4 style={{ color: '#999', fontSize: '0.8rem', textTransform: 'uppercase', margin: 0 }}>Update Status</h4>
+                <button onClick={() => deleteOrder(selectedOrder.id)}
+                  style={{ padding: '0.5rem 1rem', background: '#ff5252', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '600' }}>
+                  🗑 Delete Order
+                </button>
+              </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                 {getStatusOptions(selectedOrder.status).map(status => (
                   <button key={status} onClick={() => { updateStatus(selectedOrder.id, status); setSelectedOrder({ ...selectedOrder, status }); }}
