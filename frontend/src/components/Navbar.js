@@ -1,43 +1,60 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+  React.useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  React.useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
   return (
-    <nav className="navbar" style={{
-      background: scrolled ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 0.95)',
-      boxShadow: scrolled ? '0 2px 20px rgba(0,0,0,0.1)' : 'none'
-    }}>
-      <Link to="/" className="nav-logo">Sweet Crumb</Link>
-      <ul className="nav-links">
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/menu">Menu</Link></li>
-        <li><Link to="/gallery">Gallery</Link></li>
-        <li><Link to="/about">About</Link></li>
-        <li><Link to="/contact">Contact</Link></li>
-        <li>
-          <Link to="/order" style={{
-            padding: '0.75rem 1.5rem',
-            background: '#e91e8c',
-            color: 'white',
-            borderRadius: '25px',
-            textDecoration: 'none',
-            fontWeight: '600'
-          }}>
-            Order Now
-          </Link>
-        </li>
-      </ul>
-    </nav>
+    <>
+      <nav className="navbar" style={{
+        background: scrolled ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 0.95)',
+        boxShadow: scrolled ? '0 2px 20px rgba(0,0,0,0.1)' : 'none'
+      }}>
+        <Link to="/" className="nav-logo" onClick={() => setMenuOpen(false)}>Sweet Crumb</Link>
+        <ul className="nav-links">
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/menu">Menu</Link></li>
+          <li><Link to="/gallery">Gallery</Link></li>
+          <li><Link to="/about">About</Link></li>
+          <li><Link to="/contact">Contact</Link></li>
+          <li>
+            <Link to="/order" className="nav-order-btn">
+              Order Now
+            </Link>
+          </li>
+        </ul>
+        <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+          <span className={`hamburger-line ${menuOpen ? 'open' : ''}`}></span>
+        </button>
+      </nav>
+
+      <div className={`mobile-menu ${menuOpen ? 'open' : ''}`}>
+        <Link to="/" className="mobile-link" onClick={() => setMenuOpen(false)}>Home</Link>
+        <Link to="/menu" className="mobile-link" onClick={() => setMenuOpen(false)}>Menu</Link>
+        <Link to="/gallery" className="mobile-link" onClick={() => setMenuOpen(false)}>Gallery</Link>
+        <Link to="/about" className="mobile-link" onClick={() => setMenuOpen(false)}>About</Link>
+        <Link to="/contact" className="mobile-link" onClick={() => setMenuOpen(false)}>Contact</Link>
+        <Link to="/order" className="mobile-link mobile-order-btn" onClick={() => setMenuOpen(false)}>Order Now</Link>
+      </div>
+    </>
   );
 };
 
