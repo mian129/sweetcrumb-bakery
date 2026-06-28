@@ -1,41 +1,49 @@
 const express = require('express');
 const router = express.Router();
-const Settings = require('../models/Settings');
+const supabase = require('../db');
 const auth = require('../middleware/auth');
+const { snakeToCamel } = require('../utils/helpers');
 
-// Get settings (public - for frontend to get delivery charges and bank details)
 router.get('/', async (req, res) => {
   try {
-    let settings = await Settings.findOne();
+    let { data: settings } = await supabase.from('settings').select('*').limit(1).single();
+
     if (!settings) {
-      settings = await Settings.create({});
+      const { data: created } = await supabase.from('settings').insert({}).select().single();
+      settings = created;
     }
-    res.json(settings);
+
+    res.json(snakeToCamel(settings));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Update settings (admin only)
 router.put('/', auth, async (req, res) => {
   try {
-    let settings = await Settings.findOne();
+    let { data: settings } = await supabase.from('settings').select('*').limit(1).single();
+
     if (!settings) {
-      settings = new Settings();
+      const { data: created } = await supabase.from('settings').insert({}).select().single();
+      settings = created;
     }
-    
+
     const { deliveryCharges, bankName, accountTitle, accountNumber, iban, branchCode, bankInstructions } = req.body;
-    
-    if (deliveryCharges !== undefined) settings.deliveryCharges = deliveryCharges;
-    if (bankName !== undefined) settings.bankName = bankName;
-    if (accountTitle !== undefined) settings.accountTitle = accountTitle;
-    if (accountNumber !== undefined) settings.accountNumber = accountNumber;
-    if (iban !== undefined) settings.iban = iban;
-    if (branchCode !== undefined) settings.branchCode = branchCode;
-    if (bankInstructions !== undefined) settings.bankInstructions = bankInstructions;
-    
-    await settings.save();
-    res.json(settings);
+
+    const updates = {};
+    if (deliveryCharges !== undefined) updates.delivery_charges = deliveryCharges;
+    if (bankName !== undefined) updates.bank_name = bankName;
+    if (accountTitle !== undefined) updates.account_title = accountTitle;
+    if (accountNumber !== undefined) updates.account_number = accountNumber;
+    if (iban !== undefined) updates.iban = iban;
+    if (branchCode !== undefined) updates.branch_code = branchCode;
+    if (bankInstructions !== undefined) updates.bank_instructions = bankInstructions;
+    updates.updated_at = new Date().toISOString();
+
+    const { data: updated, error } = await supabase.from('settings').update(updates).eq('id', settings.id).select().single();
+    if (error) throw error;
+
+    res.json(snakeToCamel(updated));
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

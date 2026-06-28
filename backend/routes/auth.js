@@ -2,11 +2,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const supabase = require('../db');
 const auth = require('../middleware/auth');
 const nodemailer = require('nodemailer');
 
-// Email transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -16,35 +15,30 @@ const transporter = nodemailer.createTransport({
   tls: { rejectUnauthorized: false }
 });
 
-// Register
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
-    
-    console.log('Register attempt:', { username, email });
-    let user = await User.findOne({ email });
-    if (user) {
-      console.log('User already exists');
+
+    const { data: existing } = await supabase.from('users').select('id').eq('email', email).single();
+    if (existing) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log('Password hashed');
 
-    user = new User({
+    const { data: user, error } = await supabase.from('users').insert({
       username,
       email,
-      password: hashedPassword
-    });
+      password: hashedPassword,
+      role: 'admin'
+    }).select('id, username, email, role, created_at').single();
 
-    await user.save();
-    console.log('User saved:', user.id);
+    if (error) throw error;
 
-    // Send credentials email to admin
     try {
       const mailOptions = {
-        from: `"🧁 Sweet Crumb" <${process.env.EMAIL_USER}>`,
+        from: `"Sweet Crumb" <${process.env.EMAIL_USER}>`,
         to: 'Sweetcrumb099@gmail.com',
         subject: `New Admin Registered - ${username}`,
         html: `
@@ -66,7 +60,7 @@ router.post('/register', async (req, res) => {
         <body>
           <div class="container">
             <div class="header">
-              <h1>🧁 Sweet Crumb - New Admin</h1>
+              <h1>Sweet Crumb - New Admin</h1>
             </div>
             <div class="content">
               <p>Naya admin register hua hai. Yeh hain uski details:</p>
@@ -86,34 +80,24 @@ router.post('/register', async (req, res) => {
         `
       };
       await transporter.sendMail(mailOptions);
-      console.log('New admin credentials email sent to Sweetcrumb099@gmail.com');
     } catch (emailErr) {
       console.log('Email send failed:', emailErr.message);
     }
 
-    const payload = {
-      user: {
-        id: user.id,
-        role: user.role
-      }
-    };
-
-    jwt.sign(payload, process.env.JWT_SECRET || 'sweetcrumb_secret', { expiresIn: '7d' }, (err, token) => {
-      if (err) throw err;
-      res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
-    });
+    const payload = { user: { id: user.id, role: user.role } };
+    const token = jwt.sign(payload, process.env.JWT_SECRET || 'sweetcrumb_secret', { expiresIn: '7d' });
+    res.json({ token, user });
   } catch (err) {
     console.error('Register error:', err.message);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 });
 
-// Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const { data: user } = await supabase.from('users').select('*').eq('email', email).single();
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -123,27 +107,19 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const payload = {
-      user: {
-        id: user.id,
-        role: user.role
-      }
-    };
-
-    jwt.sign(payload, process.env.JWT_SECRET || 'sweetcrumb_secret', { expiresIn: '7d' }, (err, token) => {
-      if (err) throw err;
-      res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
-    });
+    const payload = { user: { id: user.id, role: user.role } };
+    const token = jwt.sign(payload, process.env.JWT_SECRET || 'sweetcrumb_secret', { expiresIn: '7d' });
+    res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
   }
 });
 
-// Get current user
 router.get('/me', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.user.id).select('-password');
+    const { data: user } = await supabase.from('users').select('id, username, email, role, created_at').eq('id', req.user.user.id).single();
+    if (!user) return res.status(404).json({ message: 'User not found' });
     res.json(user);
   } catch (err) {
     console.error(err.message);

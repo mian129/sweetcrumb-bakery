@@ -11,7 +11,6 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Verify transporter on startup
 transporter.verify((error) => {
   if (error) {
     console.log('Email transporter error:', error);
@@ -22,18 +21,17 @@ transporter.verify((error) => {
 
 const sendOrderConfirmation = async (order) => {
   try {
-    const itemsList = order.items.map(item =>
+    const items = order.items || [];
+    const itemsList = items.map(item =>
       `<tr>
         <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.quantity}x ${item.name || 'Product'}</td>
         <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">Rs. ${(item.price || 0) * item.quantity}</td>
       </tr>`
     ).join('');
 
-    const paymentLabels = {
-      bank: 'Bank Transfer'
-    };
-
-    const orderId = order._id.toString();
+    const orderId = order.id.toString();
+    const customerName = order.customer_name || order.customerName || 'Customer';
+    const orderDate = order.created_at || order.createdAt;
 
     const html = `
     <!DOCTYPE html>
@@ -61,15 +59,15 @@ const sendOrderConfirmation = async (order) => {
     <body>
       <div class="container">
         <div class="header">
-          <h1>🧁 Sweet Crumb</h1>
+          <h1>Sweet Crumb</h1>
           <p>Order Confirmation</p>
         </div>
         
         <div class="content">
-          <div class="order-badge">✓ Order Confirmed</div>
+          <div class="order-badge">Order Confirmed</div>
           
           <p style="color: #555; font-size: 16px;">
-            Assalam-o-Alaikum <strong>${order.customerName}</strong>,
+            Assalam-o-Alaikum <strong>${customerName}</strong>,
           </p>
           <p style="color: #555; line-height: 1.8;">
             Shukriya! Aapka order successfully receive ho gaya hai. Hum aapke order ko jaldi se jaldi tayyar karenge.
@@ -79,7 +77,7 @@ const sendOrderConfirmation = async (order) => {
             <h3>Order Details</h3>
             <div class="info-box">
               <p><strong>Order ID:</strong> #${orderId.slice(-6).toUpperCase()}</p>
-              <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString('en-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              <p><strong>Date:</strong> ${orderDate ? new Date(orderDate).toLocaleDateString('en-PK', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</p>
             </div>
           </div>
 
@@ -87,17 +85,9 @@ const sendOrderConfirmation = async (order) => {
             <h3>Items Ordered</h3>
             <table>
               ${itemsList}
-              <tr>
-                <td style="padding: 10px; color: #666;">Subtotal</td>
-                <td style="padding: 10px; text-align: right;">Rs. ${order.totalAmount - 50}</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; color: #666;">Delivery Fee</td>
-                <td style="padding: 10px; text-align: right;">Rs. 50</td>
-              </tr>
               <tr class="total-row">
                 <td style="padding: 10px;">Total</td>
-                <td style="padding: 10px; text-align: right; color: #d4a574;">Rs. ${order.totalAmount}</td>
+                <td style="padding: 10px; text-align: right; color: #d4a574;">Rs. ${order.total_amount || order.totalAmount || 0}</td>
               </tr>
             </table>
           </div>
@@ -105,24 +95,25 @@ const sendOrderConfirmation = async (order) => {
           <div class="section">
             <h3>Delivery Address</h3>
             <div class="info-box">
-              <p>${order.address}</p>
-              <p>${order.city} ${order.postalCode}</p>
-              <p><strong>Phone:</strong> ${order.phone}</p>
+              <p>${order.address || ''}</p>
+              <p>${order.city || ''} ${order.postal_code || order.postalCode || ''}</p>
+              <p><strong>Phone:</strong> ${order.phone || ''}</p>
             </div>
           </div>
 
           <div class="section">
             <h3>Payment Method</h3>
             <div class="info-box">
-              <p><strong>${paymentLabels[order.paymentMethod] || order.paymentMethod}</strong></p>
+              <p><strong>Bank Transfer</strong></p>
+              ${order.transaction_id ? `<p><strong>Transaction ID:</strong> ${order.transaction_id}</p>` : ''}
             </div>
           </div>
 
-          ${order.specialInstructions ? `
+          ${order.special_instructions ? `
           <div class="section">
             <h3>Special Instructions</h3>
             <div class="info-box">
-              <p>${order.specialInstructions}</p>
+              <p>${order.special_instructions}</p>
             </div>
           </div>
           ` : ''}
@@ -134,7 +125,7 @@ const sendOrderConfirmation = async (order) => {
 
         <div class="footer">
           <p><strong>Sweet Crumb</strong></p>
-          <p>Baked with Love ❤️</p>
+          <p>Baked with Love</p>
         </div>
       </div>
     </body>
@@ -142,18 +133,12 @@ const sendOrderConfirmation = async (order) => {
     `;
 
     const mailOptions = {
-      from: `"🧁 Sweet Crumb" <${process.env.EMAIL_USER}>`,
+      from: `"Sweet Crumb" <${process.env.EMAIL_USER}>`,
       to: order.email,
       subject: `Order Confirmed #${orderId.slice(-6).toUpperCase()} - Sweet Crumb`,
-      html: html,
-      headers: {
-        'X-Mailer': 'SweetCrumbBakery',
-        'List-Unsubscribe': `<mailto:${process.env.EMAIL_USER}?subject=unsubscribe>`
-      },
-      replyTo: process.env.EMAIL_USER
+      html: html
     };
 
-    // Only send if valid email
     if (order.email && order.email.includes('@') && order.email.includes('.')) {
       await transporter.sendMail(mailOptions);
       console.log('Order confirmation email sent to:', order.email);
