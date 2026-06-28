@@ -59,3 +59,13 @@ CREATE TABLE IF NOT EXISTS gallery (
   sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Storage policies for gallery bucket
+CREATE POLICY "Allow public reads" ON storage.objects
+  FOR SELECT USING (bucket_id = 'gallery');
+
+CREATE POLICY "Allow all inserts" ON storage.objects
+  FOR INSERT WITH CHECK (bucket_id = 'gallery');
+
+CREATE POLICY "Allow all deletes" ON storage.objects
+  FOR DELETE USING (bucket_id = 'gallery');

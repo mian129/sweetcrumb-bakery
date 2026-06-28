@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { FaPlus, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaUpload, FaSpinner } from 'react-icons/fa';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -16,6 +16,8 @@ const Products = () => {
     featured: false,
     available: true
   });
+  const [uploadMethod, setUploadMethod] = useState('url');
+  const [uploading, setUploading] = useState(false);
 
   const placeholderImg = 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg?auto=compress&cs=tinysrgb&w=100';
 
@@ -38,6 +40,26 @@ const Products = () => {
   const handleChange = (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setFormData({ ...formData, [e.target.name]: value });
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const token = localStorage.getItem('token');
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await api.post('/api/upload', fd, {
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData({ ...formData, image: res.data.url });
+    } catch (err) {
+      alert('Upload failed');
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -175,8 +197,30 @@ const Products = () => {
               </div>
               
               <div className="form-group">
-                <label>Image URL</label>
-                <input type="url" name="image" value={formData.image} onChange={handleChange} placeholder="https://example.com/image.jpg" />
+                <label>Product Image</label>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <button type="button" onClick={() => setUploadMethod('url')} style={{
+                    padding: '0.4rem 1rem', border: '2px solid #e91e8c', borderRadius: '6px',
+                    background: uploadMethod === 'url' ? '#e91e8c' : 'white',
+                    color: uploadMethod === 'url' ? 'white' : '#e91e8c',
+                    cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem'
+                  }}>URL</button>
+                  <button type="button" onClick={() => setUploadMethod('file')} style={{
+                    padding: '0.4rem 1rem', border: '2px solid #e91e8c', borderRadius: '6px',
+                    background: uploadMethod === 'file' ? '#e91e8c' : 'white',
+                    color: uploadMethod === 'file' ? 'white' : '#e91e8c',
+                    cursor: 'pointer', fontWeight: '600', fontSize: '0.8rem'
+                  }}><FaUpload /> Upload File</button>
+                </div>
+                {uploadMethod === 'url' ? (
+                  <input type="url" name="image" value={formData.image} onChange={handleChange} placeholder="https://example.com/image.jpg" />
+                ) : (
+                  <div>
+                    <input type="file" accept="image/*" onChange={handleFileUpload}
+                      style={{ width: '100%', padding: '0.5rem', border: '2px solid #eee', borderRadius: '6px' }} />
+                    {uploading && <p style={{ color: '#e91e8c', fontSize: '0.8rem', marginTop: '0.3rem' }}><FaSpinner /> Uploading...</p>}
+                  </div>
+                )}
                 {formData.image && (
                   <div style={{ marginTop: '0.5rem', borderRadius: '8px', overflow: 'hidden', height: '120px', background: '#fdf8f3' }}>
                     <img
