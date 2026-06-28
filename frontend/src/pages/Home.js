@@ -222,7 +222,7 @@ const Home = () => {
         <motion.h2 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
           style={{ fontSize: '2.5rem', fontFamily: "'Playfair Display', serif", color: '#fce4ec', marginBottom: '3rem' }}>What Our Customers Say</motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-          {[{ name: 'Sarah M.', text: 'Best cupcakes in Faisalabad! The buttercream is absolutely divine.', stars: 5 }, { name: 'John D.', text: "Ordered a custom cake for my daughter's birthday. Perfect!", stars: 5 }, { name: 'Emily R.', text: 'The sugar cookies were a hit at our wedding. Thank you!', stars: 5 }].map((r, i) => (
+          {[{ name: 'Ayesha Khan', text: 'Best cupcakes in Faisalabad! The buttercream is absolutely divine. Har bite mein pyaar ka ehsaas hota hai.', stars: 5 }, { name: 'Fatima Malik', text: "Meri beti ki birthday cake order kiya tha - itna perfect banaya ke sab ne tareef ki. Highly recommended!", stars: 5 }, { name: 'Zainab Ali', text: 'Sugar cookies hamari shaadi ka highlight the. Guest sab ne pucha kahan se mangwaye. Thank you Sweet Crumb!', stars: 5 }].map((r, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} whileHover={{ y: -10 }} transition={{ duration: 0.6, delay: i * 0.2 }} viewport={{ once: true }}
               style={{ background: 'rgba(255,255,255,0.05)', padding: '2rem', borderRadius: '20px', border: '1px solid rgba(252, 228, 236, 0.2)' }}>
               <div style={{ color: '#fce4ec', fontSize: '1.2rem', marginBottom: '1rem' }}>{'★'.repeat(r.stars)}</div>
