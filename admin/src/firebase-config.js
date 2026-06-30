@@ -1,5 +1,4 @@
-import { initializeApp } from 'firebase/app';
-import { getMessaging, getToken, onMessage } from 'firebase/messaging';
+let messaging = null;
 
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
@@ -10,24 +9,52 @@ const firebaseConfig = {
   appId: "YOUR_APP_ID"
 };
 
-let app;
-let messaging;
+const initFirebase = async () => {
+  if (typeof window === 'undefined') return null;
+  if (messaging) return messaging;
+  
+  try {
+    if (!window.firebase) {
+      await loadScript('https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js');
+      await loadScript('https://www.gstatic.com/firebasejs/10.7.0/firebase-messaging-compat.js');
+    }
+    
+    if (window.firebase && !window.firebase.apps.length) {
+      window.firebase.initializeApp(firebaseConfig);
+    }
+    
+    if (window.firebase && window.firebase.messaging) {
+      messaging = window.firebase.messaging();
+    }
+  } catch (e) {
+    console.log('Firebase init skipped:', e.message);
+  }
+  
+  return messaging;
+};
 
-try {
-  app = initializeApp(firebaseConfig);
-  messaging = getMessaging(app);
-} catch (e) {
-  console.log('Firebase init skipped:', e.message);
-}
+const loadScript = (src) => {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = src;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+};
 
 export const requestPermission = async () => {
-  if (!messaging) return null;
+  const msg = await initFirebase();
+  if (!msg) return null;
+  
   try {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
-      const token = await getToken(messaging, {
-        vapidKey: 'YOUR_VAPID_KEY'
-      });
+      const token = await msg.getToken({ vapidKey: 'YOUR_VAPID_KEY' });
       console.log('FCM Token:', token);
       return token;
     }
@@ -39,9 +66,16 @@ export const requestPermission = async () => {
 
 export const onMessageListener = (callback) => {
   if (!messaging) return () => {};
-  return onMessage(messaging, (payload) => {
-    callback(payload);
-  });
+  
+  try {
+    messaging.onMessage((payload) => {
+      callback(payload);
+    });
+  } catch (e) {
+    // Silent fail
+  }
+  
+  return () => {};
 };
 
 export { messaging };
