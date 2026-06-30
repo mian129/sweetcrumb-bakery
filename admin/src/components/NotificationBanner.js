@@ -10,7 +10,7 @@ const NotificationBanner = ({ notification, onDismiss }) => {
       const timer = setTimeout(() => {
         setVisible(false);
         setTimeout(() => onDismiss(), 300);
-      }, 8000);
+      }, 12000);
       return () => clearTimeout(timer);
     }
   }, [notification, onDismiss]);
@@ -23,8 +23,16 @@ const NotificationBanner = ({ notification, onDismiss }) => {
         <FaBell />
       </div>
       <div className="notification-content">
-        <strong>New Order Received!</strong>
-        <p>{notification.customerName} - Rs. {notification.totalAmount}</p>
+        <strong>🎂 New Order Received!</strong>
+        <p>
+          <strong>{notification.customerName}</strong> - Rs. {notification.totalAmount}
+          {notification.phone && <span> | {notification.phone}</span>}
+        </p>
+        {notification.items && (
+          <p style={{ fontSize: '0.75rem', opacity: 0.85, margin: '2px 0 0' }}>
+            {notification.items.map(i => `${i.quantity}x ${i.name}`).join(', ')}
+          </p>
+        )}
       </div>
       <button className="notification-close" onClick={() => { setVisible(false); setTimeout(() => onDismiss(), 300); }}>
         <FaTimes />

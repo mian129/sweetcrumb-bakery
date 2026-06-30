@@ -1,24 +1,43 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import api from '../api';
 
-const POLL_INTERVAL = 10000;
+const POLL_INTERVAL = 5000;
 
 const playNotificationSound = () => {
   try {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const notes = [523.25, 659.25, 783.99, 1046.50];
-    notes.forEach((freq, i) => {
+    
+    // Loud notification bell sound
+    const play = (freq, startTime, duration, vol) => {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.type = 'sine';
       osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.3, audioCtx.currentTime + i * 0.12);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.12 + 0.3);
-      osc.start(audioCtx.currentTime + i * 0.12);
-      osc.stop(audioCtx.currentTime + i * 0.12 + 0.3);
-    });
+      gain.gain.setValueAtTime(vol, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    };
+
+    const now = audioCtx.currentTime;
+    // Bell pattern: Ding-Ding!
+    play(880, now, 0.25, 0.5);
+    play(1100, now + 0.15, 0.25, 0.5);
+    play(880, now + 0.4, 0.25, 0.5);
+    play(1100, now + 0.55, 0.35, 0.5);
+
+    // Second bell after short pause
+    play(880, now + 1.0, 0.25, 0.5);
+    play(1100, now + 1.15, 0.25, 0.5);
+    play(880, now + 1.4, 0.25, 0.5);
+    play(1100, now + 1.55, 0.4, 0.5);
+
+    // Vibrate phone if available
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200, 100, 200]);
+    }
   } catch (e) {
     // Audio not available
   }
@@ -56,15 +75,20 @@ const useNotifications = () => {
 
       if (newOrders.length > 0 && lastOrderIdRef.current) {
         const newestOrder = newOrders[0];
-        if (newestOrder.id !== lastOrderIdRef.current && newestOrder.status === 'pending') {
+        if (newestOrder.id !== lastOrderIdRef.current) {
+          // Koi bhi naya order aaye toh notification
           setLatestOrder(newestOrder);
           playNotificationSound();
           
+          // Browser notification
           if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('New Order! 🎂', {
-              body: `${newestOrder.customerName} - Rs. ${newestOrder.totalAmount}`,
+            new Notification('🎂 New Order Received!', {
+              body: `${newestOrder.customerName} - Rs. ${newestOrder.totalAmount}\n${newestOrder.items?.map(i => `${i.quantity}x ${i.name}`).join(', ') || ''}`,
               icon: '/icons/icon-192.svg',
-              tag: 'new-order'
+              badge: '/icons/icon-192.svg',
+              tag: 'new-order-' + newestOrder.id,
+              renotify: true,
+              requireInteraction: true
             });
           }
         }
@@ -91,8 +115,7 @@ const useNotifications = () => {
         await requestPermission();
         
         onMessageListener((payload) => {
-          const data = payload.data || {};
-          const title = payload.notification?.title || 'New Order!';
+          const title = payload.notification?.title || '🎂 New Order!';
           const body = payload.notification?.body || '';
           
           playNotificationSound();
@@ -101,7 +124,10 @@ const useNotifications = () => {
             new Notification(title, {
               body,
               icon: '/icons/icon-192.svg',
-              tag: 'new-order'
+              badge: '/icons/icon-192.svg',
+              tag: 'new-order-firebase',
+              renotify: true,
+              requireInteraction: true
             });
           }
         });
