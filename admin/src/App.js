@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -7,11 +7,15 @@ import Orders from './pages/Orders';
 import Settings from './pages/Settings';
 import Gallery from './pages/Gallery';
 import Sidebar from './components/Sidebar';
+import BottomNav from './components/BottomNav';
+import NotificationBanner from './components/NotificationBanner';
+import useNotifications from './hooks/useNotifications';
 import './App.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const { unreadCount, latestOrder, dismissNotification, clearUnread } = useNotifications();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,6 +25,12 @@ function App() {
       setUser(JSON.parse(savedUser));
     }
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated && 'Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, [isAuthenticated]);
 
   const handleLogin = (token, userData) => {
     localStorage.setItem('token', token);
@@ -34,6 +44,7 @@ function App() {
     localStorage.removeItem('user');
     setIsAuthenticated(false);
     setUser(null);
+    clearUnread();
   };
 
   if (!isAuthenticated) {
@@ -43,8 +54,9 @@ function App() {
   return (
     <Router>
       <div className="admin-layout">
-        <Sidebar user={user} onLogout={handleLogout} />
+        <Sidebar user={user} onLogout={handleLogout} unreadCount={unreadCount} />
         <main className="admin-main">
+          <NotificationBanner notification={latestOrder} onDismiss={dismissNotification} />
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/products" element={<Products />} />
@@ -54,6 +66,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
+        <BottomNav unreadCount={unreadCount} />
       </div>
     </Router>
   );

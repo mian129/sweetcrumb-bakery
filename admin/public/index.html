@@ -2,13 +2,49 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#2c1810" />
-    <meta name="description" content="Sweet Crumb Bakery Admin Panel" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#e91e8c" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Sweet Crumb Admin" />
+    <meta name="description" content="Sweet Crumb Bakery Admin Panel - Manage orders, products, gallery" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon-192.svg" />
     <title>Sweet Crumb Admin</title>
+    <style>
+      body { margin: 0; padding: 0; background: #fff5f7; }
+      #splash { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #fff5f7, #fce4ec); display: flex; align-items: center; justify-content: center; z-index: 99999; }
+      #splash .logo { text-align: center; }
+      #splash h1 { font-family: Georgia, serif; color: #880e4f; font-size: 2rem; margin: 0; }
+      #splash p { color: #e91e8c; font-size: 0.9rem; margin-top: 0.5rem; }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="splash">
+      <div class="logo">
+        <h1>Sweet Crumb</h1>
+        <p>Loading Admin Panel...</p>
+      </div>
+    </div>
     <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('SW registered:', reg.scope))
+            .catch(err => console.log('SW failed:', err));
+          
+          navigator.serviceWorker.register('/firebase-messaging-sw.js')
+            .then(reg => console.log('Firebase SW registered'))
+            .catch(err => console.log('Firebase SW skipped:', err.message));
+        });
+      }
+      window.addEventListener('load', () => {
+        setTimeout(() => { const s = document.getElementById('splash'); if (s) s.style.display = 'none'; }, 1500);
+      });
+    </script>
   </body>
 </html>

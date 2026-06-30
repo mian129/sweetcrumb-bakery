@@ -7,9 +7,32 @@ const { snakeToCamel, camelToSnake } = require('../utils/helpers');
 
 router.get('/', auth, async (req, res) => {
   try {
-    const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+    const { since } = req.query;
+    let query = supabase.from('orders').select('*').order('created_at', { ascending: false });
+    
+    if (since) {
+      query = query.gt('created_at', since);
+    }
+    
+    const { data, error } = await query;
     if (error) throw error;
     res.json(snakeToCamel(data));
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+router.get('/stats', auth, async (req, res) => {
+  try {
+    const { data: allOrders, error } = await supabase.from('orders').select('id, status, total_amount');
+    if (error) throw error;
+    
+    const pending = allOrders.filter(o => o.status === 'pending').length;
+    const total = allOrders.length;
+    const revenue = allOrders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
+    
+    res.json({ total, pending, revenue });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');
