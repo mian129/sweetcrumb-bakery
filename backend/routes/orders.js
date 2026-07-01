@@ -2,9 +2,46 @@ const express = require('express');
 const router = express.Router();
 const supabase = require('../db');
 const auth = require('../middleware/auth');
-const { sendOrderConfirmation } = require('../utils/email');
-const { snakeToCamel, camelToSnake } = require('../utils/helpers');
+const { sendOrderConfirmation, sendStatusUpdate } = require('../utils/email');
+const { snakeToCamel, generateOrderNumber } = require('../utils/helpers');
 
+// Public: Track order by order number (no auth needed)
+router.get('/track/:orderNumber', async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('order_number, customer_name, items, total_amount, status, status_history, created_at, address, city')
+      .eq('order_number', req.params.orderNumber.toUpperCase())
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    const statusSteps = [
+      { key: 'pending', label: 'Order Placed', icon: '📋' },
+      { key: 'confirmed', label: 'Confirmed', icon: '✅' },
+      { key: 'preparing', label: 'Preparing', icon: '👨‍🍳' },
+      { key: 'out_for_delivery', label: 'Out for Delivery', icon: '🚚' },
+      { key: 'delivered', label: 'Delivered', icon: '🎉' }
+    ];
+
+    const currentStatusIndex = statusSteps.findIndex(s => s.key === data.status);
+    const isCancelled = data.status === 'cancelled';
+
+    res.json(snakeToCamel({
+      ...data,
+      statusSteps,
+      currentStatusIndex,
+      isCancelled
+    }));
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// Admin: Get all orders
 router.get('/', auth, async (req, res) => {
   try {
     const { since } = req.query;
@@ -23,6 +60,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
+// Admin: Get stats
 router.get('/stats', auth, async (req, res) => {
   try {
     const { data: allOrders, error } = await supabase.from('orders').select('id, status, total_amount');
@@ -39,11 +77,15 @@ router.get('/stats', auth, async (req, res) => {
   }
 });
 
+// Public: Place order
 router.post('/', async (req, res) => {
   try {
     const { customerName, email, phone, address, city, postalCode, paymentMethod, transactionId, items, totalAmount, specialInstructions } = req.body;
 
+    const orderNumber = generateOrderNumber();
+
     const dbData = {
+      order_number: orderNumber,
       customer_name: customerName,
       email,
       phone,
@@ -54,7 +96,9 @@ router.post('/', async (req, res) => {
       transaction_id: transactionId || '',
       items: items || [],
       total_amount: totalAmount,
-      special_instructions: specialInstructions || ''
+      special_instructions: specialInstructions || '',
+      status: 'pending',
+      status_history: [{ status: 'pending', timestamp: new Date().toISOString() }]
     };
 
     const { data, error } = await supabase.from('orders').insert(dbData).select().single();
@@ -69,15 +113,37 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Admin: Update order status + send email + track history
 router.put('/:id', auth, async (req, res) => {
   try {
     const { status } = req.body;
 
-    const { data, error } = await supabase.from('orders').update({ status }).eq('id', req.params.id).select().single();
+    // Get current order
+    const { data: currentOrder } = await supabase.from('orders').select('*').eq('id', req.params.id).single();
+    if (!currentOrder) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    // Build status history
+    let statusHistory = currentOrder.status_history || [];
+    if (!Array.isArray(statusHistory)) statusHistory = [];
+    statusHistory = [...statusHistory, { status, timestamp: new Date().toISOString() }];
+
+    // Update status + history
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ status, status_history: statusHistory })
+      .eq('id', req.params.id)
+      .select()
+      .single();
 
     if (error || !data) {
       return res.status(404).json({ message: 'Order not found' });
     }
+
+    // Send status update email
+    sendStatusUpdate(data, status).catch(err => console.log('Status email skipped:', err.message));
+
     res.json(snakeToCamel(data));
   } catch (err) {
     console.error(err.message);
@@ -85,6 +151,7 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
+// Admin: Delete order
 router.delete('/:id', auth, async (req, res) => {
   try {
     const { error } = await supabase.from('orders').delete().eq('id', req.params.id);

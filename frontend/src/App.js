@@ -6,6 +6,7 @@ import Gallery from './pages/Gallery';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Order from './pages/Order';
+import Tracking from './pages/Tracking';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import './App.css';
@@ -22,6 +23,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/order" element={<Order />} />
+          <Route path="/track" element={<Tracking />} />
         </Routes>
         <Footer />
       </div>

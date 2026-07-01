@@ -8,6 +8,7 @@ const Order = () => {
   const [cart, setCart] = useState([]);
   const [step, setStep] = useState(1);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [orderNumber, setOrderNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [imgErrors, setImgErrors] = useState({});
   const [settings, setSettings] = useState({ deliveryCharges: 50, bankName: '', accountTitle: '', accountNumber: '', iban: '', branchCode: '', bankInstructions: '', bankAccounts: [] });
@@ -81,7 +82,8 @@ const Order = () => {
         totalAmount: total,
         specialInstructions: formData.specialInstructions
       };
-      await api.post('/api/orders', orderData);
+      const res = await api.post('/api/orders', orderData);
+      setOrderNumber(res.data.orderNumber || '');
       setOrderPlaced(true);
       setCart([]);
       setStep(1);
@@ -99,12 +101,18 @@ const Order = () => {
         <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ textAlign: 'center', padding: '4rem', maxWidth: '500px' }}>
           <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 0.5 }} style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>✓</motion.div>
           <h1 style={{ fontSize: '2.5rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '1rem' }}>Order Placed!</h1>
-          <p style={{ color: '#666', fontSize: '1.1rem', marginBottom: '1.5rem', lineHeight: 1.7 }}>Shukriya! Aapka order successfully receive ho gaya hai. Hum jaldi se jaldi banayenge.</p>
-          <div style={{ background: 'white', borderRadius: '12px', padding: '1.5rem', marginBottom: '1.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.08)' }}>
-            <p style={{ color: '#2c1810', fontWeight: '600', marginBottom: '0.5rem' }}>📧 Confirmation Email</p>
-            <p style={{ color: '#666', fontSize: '0.9rem' }}>Agar aapne email diya hai toh aapko order confirmation email mil jayega.</p>
+          <p style={{ color: '#666', fontSize: '1.1rem', marginBottom: '1rem', lineHeight: 1.7 }}>Shukriya! Aapka order successfully receive ho gaya hai. Hum jaldi se jaldi banayenge.</p>
+          {orderNumber && (
+            <div style={{ background: 'white', borderRadius: '12px', padding: '1.5rem', marginBottom: '1.5rem', boxShadow: '0 4px 15px rgba(0,0,0,0.08)', border: '2px solid #e91e8c' }}>
+              <p style={{ color: '#666', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Aapka Order Number:</p>
+              <p style={{ fontSize: '1.8rem', fontFamily: "'Playfair Display', serif", color: '#e91e8c', fontWeight: '700', marginBottom: '0.5rem' }}>{orderNumber}</p>
+              <p style={{ color: '#999', fontSize: '0.8rem' }}>Is number se aap apna order track kar sakte hain</p>
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Link to="/track" style={{ padding: '1rem 2rem', background: '#e91e8c', color: 'white', textDecoration: 'none', borderRadius: '50px', fontSize: '1rem', fontWeight: '600' }}>Track Order</Link>
+            <Link to="/" onClick={() => setOrderPlaced(false)} style={{ padding: '1rem 2rem', background: 'white', color: '#e91e8c', border: '2px solid #e91e8c', textDecoration: 'none', borderRadius: '50px', fontSize: '1rem', fontWeight: '600' }}>Back to Home</Link>
           </div>
-          <Link to="/" onClick={() => setOrderPlaced(false)} style={{ padding: '1rem 2.5rem', background: '#e91e8c', color: 'white', textDecoration: 'none', borderRadius: '50px', fontSize: '1.1rem', fontWeight: '600' }}>Back to Home</Link>
         </motion.div>
       </div>
     );

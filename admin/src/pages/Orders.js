@@ -95,8 +95,8 @@ const Orders = () => {
           <tbody>
             {orders.map(order => (
               <tr key={order.id} onClick={() => setSelectedOrder(order)} style={{ cursor: 'pointer' }}>
-                <td style={{ fontFamily: 'monospace', fontSize: '0.85rem' }}>
-                  #{order.id.slice(-6).toUpperCase()}
+                <td style={{ fontFamily: 'monospace', fontSize: '0.85rem', fontWeight: '600', color: '#e91e8c' }}>
+                  {order.orderNumber || `#${order.id.slice(-6).toUpperCase()}`}
                 </td>
                 <td>
                   <strong>{order.customerName}</strong>
@@ -161,7 +161,7 @@ const Orders = () => {
         <div className="modal-overlay" onClick={() => setSelectedOrder(null)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '600px' }}>
             <div className="modal-header">
-              <h2>Order #{selectedOrder.id.slice(-6).toUpperCase()}</h2>
+              <h2>Order {selectedOrder.orderNumber || `#${selectedOrder.id.slice(-6).toUpperCase()}`}</h2>
               <button className="modal-close" onClick={() => setSelectedOrder(null)}>×</button>
             </div>
 
@@ -229,6 +229,22 @@ const Orders = () => {
                 ))}
               </div>
             </div>
+
+            {selectedOrder.statusHistory && selectedOrder.statusHistory.length > 0 && (
+              <div style={{ marginTop: '1.5rem', borderTop: '1px solid #eee', paddingTop: '1rem' }}>
+                <h4 style={{ color: '#999', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '0.8rem' }}>Status History</h4>
+                {selectedOrder.statusHistory.map((entry, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: '0.8rem', padding: '0.5rem 0', alignItems: 'center', fontSize: '0.85rem' }}>
+                    <span style={{ padding: '0.2rem 0.5rem', borderRadius: '4px', background: getStatusColor(entry.status), textTransform: 'capitalize', fontSize: '0.75rem', fontWeight: '500' }}>
+                      {entry.status.replace('_', ' ')}
+                    </span>
+                    <span style={{ color: '#999', fontSize: '0.8rem' }}>
+                      {new Date(entry.timestamp).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}

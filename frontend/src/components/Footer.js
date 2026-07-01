@@ -63,6 +63,7 @@ const Footer = () => {
             { to: '/', label: 'Home' },
             { to: '/menu', label: 'Menu' },
             { to: '/gallery', label: 'Gallery' },
+            { to: '/track', label: 'Track Order' },
             { to: '/about', label: 'About' },
             { to: '/contact', label: 'Contact' }
           ].map((link) => (
