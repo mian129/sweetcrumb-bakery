@@ -36,7 +36,17 @@ const Navbar = () => {
         boxShadow: scrolled ? '0 2px 20px rgba(0,0,0,0.1)' : 'none'
       }}>
         <Link to="/" className="nav-logo" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <img src="/logo.svg" alt="Sweet Crumb" style={{ width: '40px', height: '40px' }} />
+          <svg viewBox="0 0 48 48" width="40" height="40" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="navbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#e91e8c"/><stop offset="100%" stopColor="#c2185b"/></linearGradient></defs>
+            <circle cx="24" cy="24" r="24" fill="url(#navbg)"/>
+            <path d="M16 30 L18 24 L30 24 L32 30 Z" fill="#8b5a2b" opacity="0.9"/>
+            <ellipse cx="24" cy="22" rx="9" ry="5" fill="#fff5f7"/>
+            <ellipse cx="24" cy="20" rx="7" ry="4" fill="#fce4ec"/>
+            <ellipse cx="24" cy="18.5" rx="5" ry="3" fill="#fff5f7"/>
+            <circle cx="24" cy="15" r="2.5" fill="#e91e8c"/>
+            <circle cx="23.2" cy="14.3" r="0.8" fill="white" opacity="0.6"/>
+            <path d="M24 12.5 Q26 11 25 9" fill="none" stroke="#4a7c59" strokeWidth="1" strokeLinecap="round"/>
+          </svg>
           Sweet Crumb
         </Link>
         <ul className="nav-links">
