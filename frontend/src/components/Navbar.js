@@ -35,7 +35,10 @@ const Navbar = () => {
         background: scrolled ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 0.95)',
         boxShadow: scrolled ? '0 2px 20px rgba(0,0,0,0.1)' : 'none'
       }}>
-        <Link to="/" className="nav-logo" onClick={() => setMenuOpen(false)}>Sweet Crumb</Link>
+        <Link to="/" className="nav-logo" onClick={() => setMenuOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <img src="/logo.svg" alt="Sweet Crumb" style={{ width: '40px', height: '40px' }} />
+          Sweet Crumb
+        </Link>
         <ul className="nav-links">
           <li><Link to="/">Home</Link></li>
           <li><Link to="/menu">Menu</Link></li>

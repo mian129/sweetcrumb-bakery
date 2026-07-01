@@ -18,17 +18,25 @@ const Footer = () => {
       }}>
         {/* Brand */}
         <div>
-          <motion.h3
+          <motion.div
             whileHover={{ scale: 1.05 }}
             style={{
-              fontSize: '1.8rem',
-              fontFamily: "'Playfair Display', serif",
-              color: '#fce4ec',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
               marginBottom: '1rem'
             }}
           >
-            Sweet Crumb
-          </motion.h3>
+            <img src="/logo.svg" alt="Sweet Crumb" style={{ width: '40px', height: '40px' }} />
+            <h3 style={{
+              fontSize: '1.8rem',
+              fontFamily: "'Playfair Display', serif",
+              color: '#fce4ec',
+              margin: 0
+            }}>
+              Sweet Crumb
+            </h3>
+          </motion.div>
           <p style={{ color: '#f8bbd0', lineHeight: 1.8 }}>
             Thoughtfully crafted and beautifully delicious one-of-a-kind treats for every occasion.
           </p>
