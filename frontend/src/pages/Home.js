@@ -1,77 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, Environment } from '@react-three/drei';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import api from '../api';
+import { ProductGridSkeleton } from '../components/Skeleton';
 
-function Donut() {
-  const meshRef = useRef();
-  useFrame((state) => {
-    meshRef.current.rotation.x = state.clock.elapsedTime * 0.3;
-    meshRef.current.rotation.y = state.clock.elapsedTime * 0.5;
-  });
-  return (
-    <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-      <mesh ref={meshRef}>
-        <torusGeometry args={[1, 0.4, 32, 100]} />
-        <meshStandardMaterial color="#e91e8c" roughness={0.3} metalness={0.1} />
-      </mesh>
-    </Float>
-  );
-}
-
-function Cupcake() {
-  const meshRef = useRef();
-  useFrame((state) => {
-    meshRef.current.rotation.y = state.clock.elapsedTime * 0.4;
-  });
-  return (
-    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={1.5}>
-      <group ref={meshRef}>
-        <mesh position={[0, -0.5, 0]}>
-          <cylinderGeometry args={[0.6, 0.4, 1, 32]} />
-          <meshStandardMaterial color="#8b5a2b" roughness={0.5} />
-        </mesh>
-        <mesh position={[0, 0.3, 0]}>
-          <sphereGeometry args={[0.65, 32, 32]} />
-          <meshStandardMaterial color="#f5deb3" roughness={0.2} />
-        </mesh>
-      </group>
-    </Float>
-  );
-}
-
-function Cookie() {
-  const meshRef = useRef();
-  useFrame((state) => {
-    meshRef.current.rotation.z = state.clock.elapsedTime * 0.3;
-    meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime) * 0.2;
-  });
-  return (
-    <Float speed={2.5} rotationIntensity={1} floatIntensity={2}>
-      <mesh ref={meshRef}>
-        <cylinderGeometry args={[0.8, 0.8, 0.2, 32]} />
-        <meshStandardMaterial color="#c49564" roughness={0.4} />
-      </mesh>
-    </Float>
-  );
-}
-
-function Scene() {
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 5, 5]} intensity={1} />
-      <pointLight position={[-5, 5, 5]} intensity={0.5} color="#ff9999" />
-      <group position={[-2.5, 0, 0]}><Donut /></group>
-      <group position={[0, 0, 0]}><Cupcake /></group>
-      <group position={[2.5, 0, 0]}><Cookie /></group>
-      <Environment preset="sunset" />
-    </>
-  );
-}
+const Scene3D = lazy(() => import('../components/Scene3D'));
 
 const AnimatedCard = ({ image, title, desc, price, delay, productId }) => {
   const [imgError, setImgError] = useState(false);
@@ -89,6 +22,7 @@ const AnimatedCard = ({ image, title, desc, price, delay, productId }) => {
         <img
           src={imgError || !image ? placeholderImg : image}
           alt={title}
+          loading="lazy"
           onError={() => setImgError(true)}
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
@@ -117,6 +51,7 @@ const Particle = ({ delay }) => (
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [allProducts, setAllProducts] = useState([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
   const heroTexts = ["Baked with Love", "Sweet Delights", "Handcrafted Treats"];
 
   useEffect(() => {
@@ -131,6 +66,8 @@ const Home = () => {
         setAllProducts(res.data);
       } catch (err) {
         console.log('Could not fetch products');
+      } finally {
+        setLoadingProducts(false);
       }
     };
     fetchProducts();
@@ -141,7 +78,9 @@ const Home = () => {
       <section style={{ height: '100vh', position: 'relative', background: 'linear-gradient(135deg, #fff5f7 0%, #fce4ec 50%, #fff5f7 100%)', display: 'flex', alignItems: 'center', overflow: 'hidden' }}>
         {[...Array(20)].map((_, i) => <Particle key={i} delay={i * 0.3} />)}
         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}>
-          <Canvas camera={{ position: [0, 0, 6], fov: 45 }}><Scene /></Canvas>
+          <Suspense fallback={null}>
+            <Scene3D />
+          </Suspense>
         </div>
         <div style={{ position: 'relative', zIndex: 10, padding: '0 8%', maxWidth: '700px' }}>
           <AnimatePresence mode="wait">
@@ -180,7 +119,9 @@ const Home = () => {
           <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontFamily: "'Playfair Display', serif", color: '#880e4f' }}>Delicious Treats</h2>
         </motion.div>
         <div className="home-products-grid">
-          {allProducts.length > 0 ? allProducts.slice(0, 9).map((product, i) => (
+          {loadingProducts ? (
+            <ProductGridSkeleton count={6} />
+          ) : allProducts.length > 0 ? allProducts.slice(0, 9).map((product, i) => (
             <AnimatedCard key={product.id} image={product.image} title={product.name} desc={product.description} price={`Rs. ${product.price}`} delay={i * 0.1} productId={product.id} />
           )) : (
             <p style={{ textAlign: 'center', color: '#666', gridColumn: '1 / -1', padding: '3rem' }}>No products yet. Add products from the admin panel!</p>
@@ -214,7 +155,7 @@ const Home = () => {
           <Link to="/about" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', background: '#e91e8c', color: 'white', textDecoration: 'none', borderRadius: '50px', fontWeight: '600' }}>Learn More →</Link>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 60 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '320px', maxWidth: '500px' }}>
-          <motion.img whileHover={{ scale: 1.03 }} transition={{ duration: 0.4 }} src="https://images.pexels.com/photos/3251534/pexels-photo-3251534.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Our Bakery" style={{ width: '100%', borderRadius: '24px', boxShadow: '0 25px 50px rgba(0,0,0,0.15)' }} />
+          <motion.img whileHover={{ scale: 1.03 }} transition={{ duration: 0.4 }} src="https://images.pexels.com/photos/3251534/pexels-photo-3251534.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Our Bakery" loading="lazy" style={{ width: '100%', borderRadius: '24px', boxShadow: '0 25px 50px rgba(0,0,0,0.15)' }} />
         </motion.div>
       </section>
 

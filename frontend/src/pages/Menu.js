@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import api from '../api';
+import { ProductGridSkeleton } from '../components/Skeleton';
 
 const categories = ['all', 'cookies', 'cupcakes', 'cakes', 'pastries', 'brownies'];
 
@@ -9,6 +10,7 @@ const Menu = () => {
   const [products, setProducts] = useState([]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [imgErrors, setImgErrors] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -17,6 +19,8 @@ const Menu = () => {
         setProducts(res.data);
       } catch (err) {
         console.log('Could not fetch products');
+      } finally {
+        setLoading(false);
       }
     };
     fetchProducts();
@@ -44,6 +48,9 @@ const Menu = () => {
       </section>
 
       <section style={{ padding: '2rem 5% 5rem' }}>
+        {loading ? (
+          <ProductGridSkeleton count={6} />
+        ) : (
         <motion.div layout className="menu-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '2rem', maxWidth: '1300px', margin: '0 auto' }}>
           {filteredProducts.length > 0 ? (
             <AnimatePresence mode="popLayout">
@@ -55,6 +62,7 @@ const Menu = () => {
                     <img
                       src={imgErrors[product.id] || !product.image ? placeholderImg : product.image}
                       alt={product.name}
+                      loading="lazy"
                       onError={() => setImgErrors(prev => ({ ...prev, [product.id]: true }))}
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
@@ -77,6 +85,7 @@ const Menu = () => {
             </div>
           )}
         </motion.div>
+        )}
       </section>
     </div>
   );

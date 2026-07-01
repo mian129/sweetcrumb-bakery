@@ -150,6 +150,7 @@ const Order = () => {
                       whileHover={{ y: -5 }} style={{ background: 'white', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 5px 15px rgba(0,0,0,0.08)' }}>
                       <div style={{ height: '150px', overflow: 'hidden', background: '#fff5f7' }}>
                         <img src={imgErrors[item.id] || !item.image ? placeholderImg : item.image} alt={item.name}
+                          loading="lazy"
                           onError={() => setImgErrors(prev => ({ ...prev, [item.id]: true }))}
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </div>
@@ -178,6 +179,7 @@ const Order = () => {
                   <motion.div key={item.id} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
                     style={{ display: 'flex', gap: '0.8rem', padding: '0.8rem 0', borderBottom: '1px solid #eee', alignItems: 'center' }}>
                     <img src={imgErrors[item.id] || !item.image ? placeholderImg : item.image} alt={item.name}
+                      loading="lazy"
                       onError={() => setImgErrors(prev => ({ ...prev, [item.id]: true }))}
                       style={{ width: '50px', height: '50px', borderRadius: '8px', objectFit: 'cover' }} />
                     <div style={{ flex: 1 }}>

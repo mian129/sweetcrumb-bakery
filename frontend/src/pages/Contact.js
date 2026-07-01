@@ -28,7 +28,7 @@ const Contact = () => {
             ))}
           </div>
           <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} viewport={{ once: true }} style={{ marginTop: '2rem' }}>
-            <img src="https://images.pexels.com/photos/3251534/pexels-photo-3251534.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Our Bakery"
+            <img src="https://images.pexels.com/photos/3251534/pexels-photo-3251534.jpeg?auto=compress&cs=tinysrgb&w=500" alt="Our Bakery" loading="lazy"
               style={{ width: '100%', borderRadius: '20px', boxShadow: '0 15px 40px rgba(0,0,0,0.1)' }} />
           </motion.div>
         </motion.div>

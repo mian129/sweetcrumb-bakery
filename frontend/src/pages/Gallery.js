@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaImage } from 'react-icons/fa';
 import api from '../api';
+import { GallerySkeleton } from '../components/Skeleton';
 
 const ITEMS_PER_PAGE = 9;
 const CATEGORIES = ['all', 'cookies', 'cupcakes', 'cakes', 'pastries', 'brownies'];
@@ -12,6 +13,7 @@ const Gallery = () => {
   const [filter, setFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [imgErrors, setImgErrors] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -22,6 +24,8 @@ const Gallery = () => {
         }
       } catch {
         setAllImages([]);
+      } finally {
+        setLoading(false);
       }
     };
     fetchImages();
@@ -54,6 +58,9 @@ const Gallery = () => {
       </section>
 
       <section style={{ padding: '2rem 5% 3rem' }}>
+        {loading ? (
+          <GallerySkeleton count={9} />
+        ) : (
         <div className="gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
           <AnimatePresence mode="popLayout">
             {paginated.map((img, i) => (
@@ -62,7 +69,7 @@ const Gallery = () => {
                 onClick={() => setSelectedImage(img)}
                 style={{ borderRadius: '20px', overflow: 'hidden', cursor: 'pointer', position: 'relative', aspectRatio: '1' }}>
                 {!imgErrors[img.id] && (
-                  <img src={img.src} alt={img.title}
+                  <img src={img.src} alt={img.title} loading="lazy"
                     onError={() => setImgErrors(prev => ({ ...prev, [img.id]: true }))}
                     style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 )}
@@ -82,13 +89,13 @@ const Gallery = () => {
           </AnimatePresence>
         </div>
 
-        {filtered.length === 0 && (
+        {!loading && filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: '4rem 2rem', color: '#666' }}>
             <p style={{ fontSize: '1.1rem' }}>Gallery is empty. Add photos from admin panel.</p>
           </div>
         )}
 
-        {totalPages > 1 && (
+        {!loading && totalPages > 1 && (
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.8rem', marginTop: '2rem' }}>
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}
               style={{ padding: '0.6rem 1.2rem', background: currentPage === 1 ? '#ddd' : '#e91e8c', color: currentPage === 1 ? '#999' : 'white', border: 'none', borderRadius: '20px', cursor: currentPage === 1 ? 'not-allowed' : 'pointer', fontWeight: '600' }}>← Prev</motion.button>
@@ -104,6 +111,7 @@ const Gallery = () => {
         <p style={{ textAlign: 'center', color: '#999', fontSize: '0.85rem', marginTop: '1rem' }}>
           Page {currentPage} of {totalPages || 1} ({filtered.length} photos)
         </p>
+        )}
       </section>
 
       <AnimatePresence>

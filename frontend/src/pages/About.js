@@ -14,7 +14,7 @@ const About = () => {
 
       <section style={{ padding: '6rem 5%', display: 'flex', alignItems: 'center', gap: '5rem', flexWrap: 'wrap', maxWidth: '1200px', margin: '0 auto' }}>
         <motion.div initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '320px' }}>
-          <img src="https://images.pexels.com/photos/3251534/pexels-photo-3251534.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Our Bakery"
+          <img src="https://images.pexels.com/photos/3251534/pexels-photo-3251534.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Our Bakery" loading="lazy"
             style={{ width: '100%', borderRadius: '24px', boxShadow: '0 25px 50px rgba(0,0,0,0.15)' }} />
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 50 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }} style={{ flex: '1', minWidth: '320px' }}>
