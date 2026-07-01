@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -34,6 +34,10 @@ const PageLoader = () => (
 );
 
 function App() {
+  useEffect(() => {
+    fetch('https://sweetcrumb-bakery.vercel.app/api/products').catch(() => {});
+  }, []);
+
   return (
     <Router>
       <div className="App">

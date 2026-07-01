@@ -6,6 +6,7 @@ const { snakeToCamel } = require('../utils/helpers');
 
 router.get('/', async (req, res) => {
   try {
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
     const { category, featured } = req.query;
     let query = supabase.from('products').select('*').order('created_at', { ascending: false });
 

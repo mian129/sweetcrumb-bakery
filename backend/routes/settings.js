@@ -6,6 +6,7 @@ const { snakeToCamel } = require('../utils/helpers');
 
 router.get('/', async (req, res) => {
   try {
+    res.set('Cache-Control', 'public, max-age=120, stale-while-revalidate=300');
     let { data: settings } = await supabase.from('settings').select('*').order('updated_at', { ascending: false }).limit(1).single();
 
     if (!settings) {

@@ -6,6 +6,7 @@ const auth = require('../middleware/auth');
 // GET all gallery images (public)
 router.get('/', async (req, res) => {
   try {
+    res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
     const { data, error } = await supabase
       .from('gallery')
       .select('*')

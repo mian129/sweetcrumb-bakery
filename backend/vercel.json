@@ -15,5 +15,11 @@
       "src": "/(.*)",
       "dest": "api/index.js"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/products",
+      "schedule": "*/4 * * * *"
+    }
   ]
 }
