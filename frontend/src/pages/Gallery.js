@@ -61,6 +61,7 @@ const Gallery = () => {
         {loading ? (
           <GallerySkeleton count={9} />
         ) : (
+        <>
         <div className="gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', maxWidth: '1200px', margin: '0 auto' }}>
           <AnimatePresence mode="popLayout">
             {paginated.map((img, i) => (
@@ -111,6 +112,7 @@ const Gallery = () => {
         <p style={{ textAlign: 'center', color: '#999', fontSize: '0.85rem', marginTop: '1rem' }}>
           Page {currentPage} of {totalPages || 1} ({filtered.length} photos)
         </p>
+        </>
         )}
       </section>
 
