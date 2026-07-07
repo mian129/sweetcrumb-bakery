@@ -22,7 +22,7 @@ const Order = () => {
     const fetchProducts = async () => {
       try {
         const res = await api.get('/api/products');
-        setMenuItems(res.data.map(p => ({ _id: p.id, name: p.name, price: p.price, image: p.image })));
+        setMenuItems(res.data.map(p => ({ id: p.id, name: p.name, price: p.price, image: p.image })));
       } catch (err) {
         console.log('Could not fetch products');
       }

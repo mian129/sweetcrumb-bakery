@@ -4,6 +4,7 @@ import api from '../api';
 
 const Tracking = () => {
   const [orderNumber, setOrderNumber] = useState('');
+  const [phone, setPhone] = useState('');
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -19,11 +20,13 @@ const Tracking = () => {
     setSearched(true);
     
     try {
-      const res = await api.get(`/api/orders/track/${orderNumber.trim().toUpperCase()}`);
+      const params = {};
+      if (phone.trim()) params.phone = phone.trim();
+      const res = await api.get(`/api/orders/track/${orderNumber.trim().toUpperCase()}`, { params });
       setOrder(res.data);
     } catch (err) {
       if (err.response?.status === 404) {
-        setError('Order not found. Please check your order number and try again.');
+        setError('Order not found. Please check your order number and phone number.');
       } else {
         setError('Something went wrong. Please try again later.');
       }
@@ -96,9 +99,9 @@ const Tracking = () => {
             maxWidth: '500px', 
             margin: '0 auto',
             display: 'flex',
-            gap: '0.5rem',
-            flexWrap: 'wrap',
-            justifyContent: 'center'
+            flexDirection: 'column',
+            gap: '0.8rem',
+            alignItems: 'center'
           }}
         >
           <input
@@ -107,8 +110,7 @@ const Tracking = () => {
             onChange={(e) => setOrderNumber(e.target.value)}
             placeholder="Enter Order Number (e.g. SC-A3F2B)"
             style={{
-              flex: '1',
-              minWidth: '250px',
+              width: '100%',
               padding: '1rem 1.5rem',
               border: '2px solid #e91e8c',
               borderRadius: '50px',
@@ -116,6 +118,22 @@ const Tracking = () => {
               textAlign: 'center',
               fontWeight: '600',
               letterSpacing: '2px',
+              outline: 'none',
+              boxSizing: 'border-box'
+            }}
+          />
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="Apna phone number daalein (verify ke liye)"
+            style={{
+              width: '100%',
+              padding: '0.8rem 1.5rem',
+              border: '2px solid #ddd',
+              borderRadius: '50px',
+              fontSize: '1rem',
+              textAlign: 'center',
               outline: 'none',
               boxSizing: 'border-box'
             }}

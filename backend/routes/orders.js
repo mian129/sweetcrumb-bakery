@@ -5,17 +5,30 @@ const auth = require('../middleware/auth');
 const { sendOrderConfirmation, sendStatusUpdate } = require('../utils/email');
 const { snakeToCamel, generateOrderNumber } = require('../utils/helpers');
 
-// Public: Track order by order number (no auth needed)
+// Public: Track order by order number + phone verification
 router.get('/track/:orderNumber', async (req, res) => {
   try {
-    const { data, error } = await supabase
+    const { phone } = req.query;
+    const orderNumber = req.params.orderNumber.toUpperCase();
+
+    let query = supabase
       .from('orders')
-      .select('order_number, customer_name, items, total_amount, status, status_history, created_at, address, city')
-      .eq('order_number', req.params.orderNumber.toUpperCase())
-      .single();
+      .select('order_number, customer_name, phone, items, total_amount, status, status_history, created_at, address, city')
+      .eq('order_number', orderNumber);
+
+    if (phone) {
+      const cleanPhone = phone.replace(/[^0-9]/g, '');
+      query = query.or(`phone.eq.${cleanPhone},phone.eq.${phone}`);
+    }
+
+    const { data, error } = await query.single();
 
     if (error || !data) {
       return res.status(404).json({ message: 'Order not found' });
+    }
+
+    if (phone && data.phone !== phone.replace(/[^0-9]/g, '') && data.phone !== phone) {
+      return res.status(404).json({ message: 'Order not found with this phone number' });
     }
 
     const statusSteps = [
