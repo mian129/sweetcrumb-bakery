@@ -153,12 +153,17 @@ const sendOrderConfirmation = async (order) => {
       html: html
     };
 
-    if (order.email && order.email.includes('@') && order.email.includes('.')) {
-      await transporter.sendMail(mailOptions);
-      console.log('Order confirmation email sent to:', order.email);
-      return true;
+    if (order.email && order.email.includes('@') && order.email.includes('.') && order.email !== 'N/A') {
+      try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Order confirmation email SENT to:', order.email, '| MessageId:', info.messageId);
+        return true;
+      } catch (sendErr) {
+        console.error('EMAIL SEND FAILED to:', order.email, '| Error:', sendErr.message);
+        return false;
+      }
     } else {
-      console.log('No valid email provided, skipping email');
+      console.log('No valid email provided (value:', order.email, '), skipping email');
       return false;
     }
   } catch (err) {
@@ -241,11 +246,17 @@ const sendStatusUpdate = async (order, newStatus) => {
       html: html
     };
 
-    if (order.email && order.email.includes('@') && order.email.includes('.')) {
-      await transporter.sendMail(mailOptions);
-      console.log('Status update email sent to:', order.email, '-', newStatus);
-      return true;
+    if (order.email && order.email.includes('@') && order.email.includes('.') && order.email !== 'N/A') {
+      try {
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Status update email SENT to:', order.email, '-', newStatus, '| MessageId:', info.messageId);
+        return true;
+      } catch (sendErr) {
+        console.error('STATUS EMAIL FAILED to:', order.email, '| Error:', sendErr.message);
+        return false;
+      }
     }
+    console.log('No valid email for status update (value:', order.email, ')');
     return false;
   } catch (err) {
     console.error('Status email failed:', err.message);

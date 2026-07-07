@@ -117,7 +117,7 @@ router.post('/', async (req, res) => {
     const { data, error } = await supabase.from('orders').insert(dbData).select().single();
     if (error) throw error;
 
-    sendOrderConfirmation(data).catch(err => console.log('Email skipped:', err.message));
+    sendOrderConfirmation(data).catch(err => console.error('Email error:', err.message));
 
     res.json(snakeToCamel(data));
   } catch (err) {

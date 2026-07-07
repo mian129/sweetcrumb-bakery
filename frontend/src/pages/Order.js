@@ -230,9 +230,10 @@ const Order = () => {
                       style={{ width: '100%', padding: '0.8rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem' }} required />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: '500', color: '#555', fontSize: '0.9rem' }}>Email (Optional)</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="email@example.com"
+                    <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: '500', color: '#555', fontSize: '0.9rem' }}>Email (Order confirmation ke liye)</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="email@example.com - Order confirm email yahan aayega"
                       style={{ width: '100%', padding: '0.8rem', border: '1px solid #ddd', borderRadius: '8px', fontSize: '1rem' }} />
+                    <p style={{ fontSize: '0.75rem', color: '#e91e8c', marginTop: '0.3rem' }}>Email dein taake order confirmation aur tracking link mile!</p>
                   </div>
                   <div style={{ gridColumn: '1 / -1' }}>
                     <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: '500', color: '#555', fontSize: '0.9rem' }}>Delivery Address *</label>
