@@ -6,6 +6,7 @@ import Products from './pages/Products';
 import Orders from './pages/Orders';
 import Settings from './pages/Settings';
 import Gallery from './pages/Gallery';
+import Sessions from './pages/Sessions';
 import Sidebar from './components/Sidebar';
 import BottomNav from './components/BottomNav';
 import NotificationBanner from './components/NotificationBanner';
@@ -63,6 +64,7 @@ function App() {
             <Route path="/orders" element={<Orders />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/gallery" element={<Gallery />} />
+            <Route path="/sessions" element={<Sessions />} />
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </main>
