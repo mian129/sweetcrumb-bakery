@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import api from '../api';
 import { ProductGridSkeleton } from '../components/Skeleton';
 
@@ -11,6 +11,7 @@ const Menu = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [imgErrors, setImgErrors] = useState({});
   const [loading, setLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -73,7 +74,8 @@ const Menu = () => {
                     <p style={{ color: '#666', marginBottom: '1rem', minHeight: '40px' }}>{product.description || 'Delicious baked treat made with love'}</p>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <span style={{ fontSize: '1.3rem', fontWeight: '700', color: '#e91e8c' }}>Rs. {product.price || 0}</span>
-                      <Link to="/order" style={{ padding: '0.6rem 1.5rem', background: '#e91e8c', color: 'white', border: 'none', borderRadius: '20px', cursor: 'pointer', fontWeight: '600', textDecoration: 'none' }}>Order</Link>
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => addToCart(product)}
+                        style={{ padding: '0.6rem 1.5rem', background: '#e91e8c', color: 'white', border: 'none', borderRadius: '20px', cursor: 'pointer', fontWeight: '600' }}>Add to Cart</motion.button>
                     </div>
                   </div>
                 </motion.div>

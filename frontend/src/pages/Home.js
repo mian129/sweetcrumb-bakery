@@ -1,13 +1,15 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 import api from '../api';
 import { ProductGridSkeleton } from '../components/Skeleton';
 
 const Scene3D = lazy(() => import('../components/Scene3D'));
 
-const AnimatedCard = ({ image, title, desc, price, delay, productId }) => {
+const AnimatedCard = ({ image, title, desc, price, delay, product }) => {
   const [imgError, setImgError] = useState(false);
+  const { addToCart } = useCart();
   const placeholderImg = 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg?auto=compress&cs=tinysrgb&w=600';
   return (
     <motion.div
@@ -31,8 +33,11 @@ const AnimatedCard = ({ image, title, desc, price, delay, productId }) => {
         <h3 style={{ fontSize: '1.6rem', fontFamily: "'Playfair Display', serif", color: '#880e4f', marginBottom: '0.5rem' }}>{title || 'Untitled'}</h3>
         <p style={{ color: '#666', marginBottom: '1rem', lineHeight: 1.6, minHeight: '48px' }}>{desc || 'Delicious baked treat made with love'}</p>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '1.4rem', fontWeight: '700', color: '#e91e8c' }}>{price || 'Rs. 0'}</span>
-          <Link to="/order" style={{ padding: '0.6rem 1.5rem', background: '#e91e8c', color: 'white', border: 'none', borderRadius: '20px', cursor: 'pointer', fontWeight: '600', textDecoration: 'none', fontSize: '0.9rem' }}>Order</Link>
+          <span style={{ fontSize: '1.4rem', fontWeight: '700', color: '#e91e8c' }}>{price}</span>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => addToCart(product)}
+            style={{ padding: '0.6rem 1.5rem', background: '#e91e8c', color: 'white', border: 'none', borderRadius: '20px', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem' }}>
+            Add to Cart
+          </motion.button>
         </div>
       </div>
     </motion.div>
@@ -53,6 +58,7 @@ const Home = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const heroTexts = ["Baked with Love", "Sweet Delights", "Handcrafted Treats"];
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentSlide((prev) => (prev + 1) % heroTexts.length), 3000);
@@ -91,7 +97,7 @@ const Home = () => {
             style={{ fontSize: '1.3rem', color: '#6d3a5a', marginBottom: '2.5rem', lineHeight: 1.8 }}>Thoughtfully crafted and beautifully delicious one-of-a-kind treats</motion.p>
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }} style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
             <Link to="/menu" style={{ padding: '1.2rem 2.5rem', background: 'linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)', color: 'white', textDecoration: 'none', borderRadius: '50px', fontSize: '1.1rem', fontWeight: '600', boxShadow: '0 8px 25px rgba(233, 30, 140, 0.4)' }}>View Our Menu</Link>
-            <Link to="/order" style={{ padding: '1.2rem 2.5rem', background: 'transparent', color: '#e91e8c', border: '2px solid #e91e8c', textDecoration: 'none', borderRadius: '50px', fontSize: '1.1rem', fontWeight: '600' }}>Order Now</Link>
+            <button onClick={() => navigate('/menu')} style={{ padding: '1.2rem 2.5rem', background: 'transparent', color: '#e91e8c', border: '2px solid #e91e8c', borderRadius: '50px', fontSize: '1.1rem', fontWeight: '600', cursor: 'pointer' }}>Order Now</button>
           </motion.div>
         </div>
         <motion.div animate={{ y: [0, 15, 0] }} transition={{ duration: 2, repeat: Infinity }} style={{ position: 'absolute', bottom: '3rem', left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
@@ -122,7 +128,7 @@ const Home = () => {
           {loadingProducts ? (
             <ProductGridSkeleton count={6} />
           ) : allProducts.length > 0 ? allProducts.slice(0, 9).map((product, i) => (
-            <AnimatedCard key={product.id} image={product.image} title={product.name} desc={product.description} price={`Rs. ${product.price}`} delay={i * 0.1} productId={product.id} />
+            <AnimatedCard key={product.id} image={product.image} title={product.name} desc={product.description} price={`Rs. ${product.price}`} delay={i * 0.1} product={product} />
           )) : (
             <p style={{ textAlign: 'center', color: '#666', gridColumn: '1 / -1', padding: '3rem' }}>No products yet. Add products from the admin panel!</p>
           )}
@@ -182,7 +188,7 @@ const Home = () => {
         <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.2 }} viewport={{ once: true }}
           style={{ color: 'rgba(255,255,255,0.9)', marginBottom: '2.5rem', fontSize: '1.2rem', position: 'relative' }}>Let us bake something special for your next celebration</motion.p>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }} viewport={{ once: true }} style={{ position: 'relative' }}>
-          <Link to="/order" style={{ display: 'inline-block', padding: '1.2rem 3.5rem', background: 'white', color: '#e91e8c', textDecoration: 'none', borderRadius: '50px', fontSize: '1.2rem', fontWeight: '700', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}>Place an Order</Link>
+          <Link to="/menu" style={{ display: 'inline-block', padding: '1.2rem 3.5rem', background: 'white', color: '#e91e8c', textDecoration: 'none', borderRadius: '50px', fontSize: '1.2rem', fontWeight: '700', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}>Place an Order</Link>
         </motion.div>
       </section>
     </div>

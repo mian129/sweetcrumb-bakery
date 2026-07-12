@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { totalItems } = useCart();
 
   React.useEffect(() => {
     let ticking = false;
@@ -57,8 +59,13 @@ const Navbar = () => {
           <li><Link to="/contact">Contact</Link></li>
           <li><Link to="/track">Track Order</Link></li>
           <li>
-            <Link to="/order" className="nav-order-btn">
-              Order Now
+            <Link to="/cart" className="nav-order-btn" style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+              Cart
+              {totalItems > 0 && (
+                <span style={{ background: '#fff', color: '#e91e8c', borderRadius: '50%', minWidth: '22px', height: '22px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: '700', position: 'absolute', top: '-8px', right: '-8px' }}>
+                  {totalItems}
+                </span>
+              )}
             </Link>
           </li>
         </ul>
@@ -76,7 +83,9 @@ const Navbar = () => {
         <Link to="/about" className="mobile-link" onClick={() => setMenuOpen(false)}>About</Link>
         <Link to="/contact" className="mobile-link" onClick={() => setMenuOpen(false)}>Contact</Link>
         <Link to="/track" className="mobile-link" onClick={() => setMenuOpen(false)}>Track Order</Link>
-        <Link to="/order" className="mobile-link mobile-order-btn" onClick={() => setMenuOpen(false)}>Order Now</Link>
+        <Link to="/cart" className="mobile-link mobile-order-btn" onClick={() => setMenuOpen(false)}>
+          Cart {totalItems > 0 && <span style={{ background: '#fff', color: '#e91e8c', borderRadius: '50%', padding: '2px 8px', fontSize: '0.8rem', fontWeight: '700', marginLeft: '0.3rem' }}>{totalItems}</span>}
+        </Link>
       </div>
     </>
   );

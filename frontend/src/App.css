@@ -218,6 +218,11 @@ input:focus, textarea:focus {
   50% { box-shadow: 0 0 40px rgba(233, 30, 140, 0.6); }
 }
 
+@keyframes slideUp {
+  from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
 /* Selection color */
 ::selection {
   background: #e91e8c;
