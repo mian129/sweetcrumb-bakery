@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import api from '../api';
 
 const Cart = () => {
   const { cart, removeFromCart, updateQty, totalItems, totalPrice, clearCart } = useCart();
   const navigate = useNavigate();
+  const [deliveryFee, setDeliveryFee] = useState(50);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await api.get('/api/settings');
+        if (res.data.deliveryCharges) setDeliveryFee(res.data.deliveryCharges);
+      } catch (err) {}
+    };
+    fetchSettings();
+  }, []);
 
   if (totalItems === 0) {
     return (
@@ -46,11 +58,11 @@ const Cart = () => {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #f0f0f0' }}>
           <span style={{ color: '#777' }}>Delivery</span>
-          <span style={{ color: '#e91e8c', fontWeight: '600' }}>Free</span>
+          <span style={{ color: '#e91e8c', fontWeight: '600' }}>Rs. {deliveryFee}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.2rem', fontWeight: '700', color: '#880e4f' }}>
           <span>Total</span>
-          <span>Rs. {totalPrice.toLocaleString()}</span>
+          <span>Rs. {(totalPrice + deliveryFee).toLocaleString()}</span>
         </div>
       </div>
 
