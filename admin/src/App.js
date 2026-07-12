@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -11,7 +11,17 @@ import Sidebar from './components/Sidebar';
 import BottomNav from './components/BottomNav';
 import NotificationBanner from './components/NotificationBanner';
 import useNotifications from './hooks/useNotifications';
+import api from './api';
 import './App.css';
+
+function generateSessionId() {
+  let sid = localStorage.getItem('sc_session_id');
+  if (!sid) {
+    sid = 'sess_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('sc_session_id', sid);
+  }
+  return sid;
+}
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -33,16 +43,38 @@ function App() {
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const sid = generateSessionId();
+    const registerSession = async () => {
+      try {
+        await api.post('/api/auth/sessions', { sessionId: sid });
+      } catch (err) {
+        console.log('Session register skipped:', err.message);
+      }
+    };
+    registerSession();
+    const interval = setInterval(registerSession, 60000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated]);
+
   const handleLogin = (token, userData) => {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
     setIsAuthenticated(true);
     setUser(userData);
+    const sid = generateSessionId();
+    api.post('/api/auth/sessions', { sessionId: sid }).catch(() => {});
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const sid = localStorage.getItem('sc_session_id');
+    if (sid) {
+      try { await api.delete(`/api/auth/sessions/${sid}`); } catch (e) {}
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('sc_session_id');
     setIsAuthenticated(false);
     setUser(null);
     clearUnread();
