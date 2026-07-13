@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaHome, FaBox, FaShoppingCart, FaImage, FaCog, FaShieldAlt } from 'react-icons/fa';
+import { FaHome, FaBox, FaShoppingCart, FaImage } from 'react-icons/fa';
 
 const BottomNav = ({ unreadCount = 0 }) => {
   return (
@@ -23,10 +23,6 @@ const BottomNav = ({ unreadCount = 0 }) => {
       <NavLink to="/gallery" className="bottom-nav-item">
         <FaImage />
         <span>Gallery</span>
-      </NavLink>
-      <NavLink to="/sessions" className="bottom-nav-item">
-        <FaShieldAlt />
-        <span>Sessions</span>
       </NavLink>
     </nav>
   );

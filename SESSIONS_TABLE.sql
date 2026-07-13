@@ -1,8 +1,10 @@
 -- Sessions table for admin login tracking
-CREATE TABLE IF NOT EXISTS sessions (
+DROP TABLE IF EXISTS sessions;
+
+CREATE TABLE sessions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   session_id TEXT UNIQUE NOT NULL,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id TEXT NOT NULL,
   browser TEXT,
   os TEXT,
   device TEXT,
@@ -11,13 +13,9 @@ CREATE TABLE IF NOT EXISTS sessions (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enable RLS but allow all for admin
 ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
 
--- Allow all operations for authenticated users
-CREATE POLICY "Allow all for authenticated" ON sessions
-  FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "allow_all" ON sessions FOR ALL USING (true) WITH CHECK (true);
 
--- Index for faster queries
 CREATE INDEX idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX idx_sessions_session_id ON sessions(session_id);

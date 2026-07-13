@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { FaHome, FaBox, FaShoppingCart, FaCog, FaSignOutAlt, FaImage, FaBars, FaTimes, FaBell, FaShieldAlt } from 'react-icons/fa';
+import { FaHome, FaBox, FaShoppingCart, FaCog, FaSignOutAlt, FaImage, FaBars, FaTimes, FaBell } from 'react-icons/fa';
 
 const Sidebar = ({ user, onLogout, unreadCount = 0 }) => {
   const [open, setOpen] = useState(false);
@@ -45,11 +45,6 @@ const Sidebar = ({ user, onLogout, unreadCount = 0 }) => {
           <li>
             <NavLink to="/settings" onClick={() => setOpen(false)}>
               <FaCog /> Settings
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/sessions" onClick={() => setOpen(false)}>
-              <FaShieldAlt /> Sessions
             </NavLink>
           </li>
         </ul>

@@ -50,10 +50,19 @@ app.post('/api/auth/sessions', auth, async (req, res) => {
 
 app.get('/api/auth/sessions', auth, async (req, res) => {
   try {
-    const { data } = await supabase.from('sessions')
+    const { data, error } = await supabase.from('sessions')
       .select('*').eq('user_id', req.user.user.id).order('last_active', { ascending: false });
+    if (error && error.message && error.message.includes('does not exist')) {
+      return res.status(404).json({ error: 'TABLE_MISSING' });
+    }
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
     res.json(data || []);
   } catch (err) {
+    if (err.message && err.message.includes('does not exist')) {
+      return res.status(404).json({ error: 'TABLE_MISSING' });
+    }
     res.json([]);
   }
 });
