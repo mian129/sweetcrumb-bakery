@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import { FaPlus, FaEdit, FaTrash, FaUpload, FaSpinner } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaUpload, FaSpinner, FaFilePdf } from 'react-icons/fa';
+import generateMenuPdf from '../utils/generateMenuPdf';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -115,9 +116,14 @@ const Products = () => {
     <div>
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Products</h1>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-          <FaPlus /> Add Product
-        </button>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button className="btn btn-primary" onClick={() => generateMenuPdf(products)}>
+            <FaFilePdf /> Download Menu PDF
+          </button>
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            <FaPlus /> Add Product
+          </button>
+        </div>
       </div>
 
       <div className="data-table">
