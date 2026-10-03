@@ -119,10 +119,10 @@ const Products = () => {
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <button
             className="btn btn-primary"
-            onClick={() => {
+            onClick={async () => {
               try {
                 console.log('Generating PDF with products:', products);
-                generateMenuPdf(products);
+                await generateMenuPdf(products);
                 console.log('PDF generated');
               } catch (err) {
                 console.error(err);

@@ -1,5 +1,4 @@
 import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 const categoryTitles = {
   cookies: 'Cookies',
@@ -10,99 +9,148 @@ const categoryTitles = {
   other: 'Other'
 };
 
-export default function generateMenuPdf(products = []) {
+const loadImageDataUrl = async (url) => {
+  if (!url) return null;
+  try {
+    const res = await fetch(url, { mode: 'cors' });
+    if (!res.ok) return null;
+    const blob = await res.blob();
+    return await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(blob);
+    });
+  } catch (err) {
+    return null;
+  }
+};
+
+export default async function generateMenuPdf(products = []) {
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const pageWidth = doc.internal.pageSize.getWidth();
-  const margin = 48;
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 42;
+  const usableWidth = pageWidth - margin * 2;
 
   const availableProducts = products.filter((p) => p.available !== false);
   const grouped = availableProducts.reduce((acc, product) => {
-    const category = product.category || 'other';
+    const category = (product.category || 'other').toLowerCase();
     if (!acc[category]) acc[category] = [];
     acc[category].push(product);
     return acc;
   }, {});
+  Object.keys(grouped).forEach((category) => {
+    grouped[category].sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+  });
 
-  doc.setFillColor(233, 30, 140);
-  doc.rect(0, 0, pageWidth, 120, 'F');
-  doc.setFillColor(255, 245, 250);
-  doc.rect(0, 120, pageWidth, 10, 'F');
+  const drawPageHeader = () => {
+    doc.setFillColor(233, 30, 140);
+    doc.rect(0, 0, pageWidth, 110, 'F');
+    doc.setFillColor(255, 248, 252);
+    doc.rect(0, 110, pageWidth, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(26);
+    doc.text('Sweet Crumb Bakery', margin, 52);
+    doc.setFontSize(10);
+    doc.text('Fresh • Handmade • Delicious', margin, 76);
+    doc.setTextColor(255, 229, 241);
+    doc.text(`Updated ${new Date().toLocaleDateString()}`, pageWidth - margin, 76, { align: 'right' });
+  };
 
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(28);
-  doc.text('Sweet Crumb Bakery', margin, 58);
-  doc.setFontSize(11);
-  doc.text('Fresh • Handmade • Delicious', margin, 84);
+  const drawFooter = () => {
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setDrawColor(245, 215, 230);
+      doc.line(margin, pageHeight - 42, pageWidth - margin, pageHeight - 42);
+      doc.setTextColor(160, 160, 160);
+      doc.setFontSize(8);
+      doc.text('Sweet Crumb Bakery — handcrafted treats made fresh daily', margin, pageHeight - 24);
+      doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin, pageHeight - 24, { align: 'right' });
+    }
+  };
 
-  doc.setTextColor(60, 60, 60);
+  drawPageHeader();
+  let y = 145;
+  doc.setTextColor(90, 90, 90);
   doc.setFontSize(10);
-  doc.text(`Menu generated on ${new Date().toLocaleDateString()}`, margin, 155);
-  doc.text(`${availableProducts.length} items available`, pageWidth - margin, 155, { align: 'right' });
+  doc.text(`${availableProducts.length} available items`, margin, y);
+  y += 28;
 
-  let startY = 185;
-
-  Object.keys(categoryTitles).forEach((category) => {
+  for (const category of Object.keys(categoryTitles)) {
     const items = grouped[category] || [];
-    if (!items.length) return;
+    if (!items.length) continue;
 
-    if (startY > 720) {
+    if (y > pageHeight - 160) {
       doc.addPage();
-      startY = 60;
+      drawPageHeader();
+      y = 145;
     }
 
     doc.setTextColor(233, 30, 140);
-    doc.setFontSize(16);
-    doc.text(categoryTitles[category], margin, startY);
-    startY += 12;
+    doc.setFontSize(17);
+    doc.text(categoryTitles[category], margin, y);
+    doc.setDrawColor(233, 30, 140);
+    doc.line(margin, y + 8, pageWidth - margin, y + 8);
+    y += 28;
 
-    autoTable(doc, {
-      startY,
-      head: [['Item', 'Description', 'Price']],
-      body: items.map((item) => [
-        item.name || 'Untitled',
-        item.description || '',
-        `Rs. ${item.price || 0}`
-      ]),
-      theme: 'grid',
-      margin: { left: margin, right: margin },
-      styles: {
-        font: 'helvetica',
-        fontSize: 9,
-        cellPadding: 8,
-        textColor: [60, 60, 60],
-        lineColor: [245, 220, 232],
-        lineWidth: 0.5
-      },
-      headStyles: {
-        fillColor: [253, 248, 243],
-        textColor: [233, 30, 140],
-        fontStyle: 'bold'
-      },
-      columnStyles: {
-        0: { cellWidth: 140, fontStyle: 'bold' },
-        1: { cellWidth: 290 },
-        2: { cellWidth: 70, halign: 'right', fontStyle: 'bold' }
-      },
-      didDrawPage: (hookData) => {
-        if (hookData && hookData.cursor && typeof hookData.cursor.y === 'number') {
-          startY = hookData.cursor.y + 35;
-        }
+    for (const item of items) {
+      const cardHeight = 86;
+      if (y + cardHeight > pageHeight - 58) {
+        doc.addPage();
+        drawPageHeader();
+        y = 145;
       }
-    });
 
-    if (doc.lastAutoTable && typeof doc.lastAutoTable.finalY === 'number') {
-      startY = doc.lastAutoTable.finalY + 35;
+      doc.setFillColor(255, 250, 253);
+      doc.setDrawColor(244, 214, 229);
+      doc.roundedRect(margin, y, usableWidth, cardHeight, 10, 10, 'FD');
+
+      const imageData = await loadImageDataUrl(item.image);
+      if (imageData) {
+        try {
+          doc.addImage(imageData, 'JPEG', margin + 12, y + 12, 62, 62);
+        } catch (err) {
+          // ignore image errors
+        }
+      } else {
+        doc.setFillColor(246, 232, 240);
+        doc.roundedRect(margin + 12, y + 12, 62, 62, 8, 8, 'F');
+        doc.setTextColor(200, 150, 175);
+        doc.setFontSize(8);
+        doc.text('No image', margin + 43, y + 46, { align: 'center' });
+      }
+
+      doc.setTextColor(55, 55, 55);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text(String(item.name || 'Untitled'), margin + 90, y + 26, { maxWidth: usableWidth - 190 });
+
+      doc.setTextColor(120, 120, 120);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      const description = String(item.description || 'Freshly prepared, handmade with love.');
+      doc.text(doc.splitTextToSize(description, usableWidth - 190).slice(0, 2), margin + 90, y + 43);
+
+      doc.setTextColor(233, 30, 140);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text(`Rs. ${item.price || 0}`, pageWidth - margin - 14, y + 30, { align: 'right' });
+      if (item.featured) {
+        doc.setFillColor(233, 30, 140);
+        doc.roundedRect(pageWidth - margin - 78, y + 52, 64, 18, 9, 9, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(8);
+        doc.text('Featured', pageWidth - margin - 46, y + 64, { align: 'center' });
+      }
+
+      y += cardHeight + 12;
     }
-  });
 
-  const pageCount = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setTextColor(150, 150, 150);
-    doc.setFontSize(8);
-    doc.text('Sweet Crumb Bakery — Thank you for visiting', margin, doc.internal.pageSize.getHeight() - 25);
-    doc.text(`Page ${i} of ${pageCount}`, pageWidth - margin, doc.internal.pageSize.getHeight() - 25, { align: 'right' });
+    y += 16;
   }
 
+  drawFooter();
   doc.save('sweet-crumb-menu.pdf');
 }
