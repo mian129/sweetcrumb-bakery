@@ -83,12 +83,16 @@ export default function generateMenuPdf(products = []) {
         1: { cellWidth: 290 },
         2: { cellWidth: 70, halign: 'right', fontStyle: 'bold' }
       },
-      didDrawPage: () => {
-        startY = doc.lastAutoTable.finalY + 35;
+      didDrawPage: (hookData) => {
+        if (hookData && hookData.cursor && typeof hookData.cursor.y === 'number') {
+          startY = hookData.cursor.y + 35;
+        }
       }
     });
 
-    startY = doc.lastAutoTable.finalY + 35;
+    if (doc.lastAutoTable && typeof doc.lastAutoTable.finalY === 'number') {
+      startY = doc.lastAutoTable.finalY + 35;
+    }
   });
 
   const pageCount = doc.internal.getNumberOfPages();
