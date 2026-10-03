@@ -15,12 +15,28 @@ const loadImageDataUrl = async (url) => {
     const res = await fetch(url, { mode: 'cors' });
     if (!res.ok) return null;
     const blob = await res.blob();
-    return await new Promise((resolve) => {
+    const rawDataUrl = await new Promise((resolve) => {
       const reader = new FileReader();
       reader.onloadend = () => resolve(reader.result);
       reader.onerror = () => resolve(null);
       reader.readAsDataURL(blob);
     });
+    if (!rawDataUrl) return null;
+
+    const img = new Image();
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+      img.src = rawDataUrl;
+    });
+
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    if (!canvas.width || !canvas.height) return null;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    return canvas.toDataURL('image/jpeg', 0.92);
   } catch (err) {
     return null;
   }
