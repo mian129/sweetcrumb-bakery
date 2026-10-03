@@ -117,7 +117,19 @@ const Products = () => {
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Products</h1>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button className="btn btn-primary" onClick={() => generateMenuPdf(products)}>
+          <button
+            className="btn btn-primary"
+            onClick={() => {
+              try {
+                console.log('Generating PDF with products:', products);
+                generateMenuPdf(products);
+                console.log('PDF generated');
+              } catch (err) {
+                console.error(err);
+                alert(`PDF failed: ${err.message}`);
+              }
+            }}
+          >
             <FaFilePdf /> Download Menu PDF
           </button>
           <button className="btn btn-primary" onClick={() => setShowModal(true)}>
